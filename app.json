@@ -1,0 +1,47 @@
+{
+  "expo": {
+    "name": "Je Le Veux",
+    "slug": "je-le-veux",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "jeleveux",
+    "userInterfaceStyle": "dark",
+    "splash": {
+      "image": "./assets/images/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0F0F12"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.jeleveux.app",
+      "newArchEnabled": true,
+      "infoPlist": {
+        "NSFaceIDUsageDescription": "Utilisé pour sécuriser l'accès à vos consentements",
+        "CFBundleLocalizations": ["fr", "en"],
+        "CFBundleDevelopmentRegion": "fr"
+      }
+    },
+    "android": {
+      "newArchEnabled": true,
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "backgroundColor": "#0F0F12"
+      },
+      "package": "com.jeleveux.app"
+    },
+    "plugins": [
+      "expo-localization",
+      "expo-local-authentication",
+      "expo-notifications",
+      "expo-secure-store",
+      "expo-font"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "YOUR_EAS_PROJECT_ID"
+      }
+    }
+  }
+}
