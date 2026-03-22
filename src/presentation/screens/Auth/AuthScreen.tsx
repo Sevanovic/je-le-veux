@@ -214,6 +214,8 @@ export function AuthScreen() {
               setErrors((e) => ({ ...e, password: '' }));
             }}
             secureTextEntry
+            textContentType="none"
+            autoComplete="off"
             error={errors.password}
             testID="auth-password-input"
           />
@@ -229,6 +231,8 @@ export function AuthScreen() {
                 setErrors((e) => ({ ...e, confirmPassword: '' }));
               }}
               secureTextEntry
+              textContentType="none"
+              autoComplete="off"
               error={errors.confirmPassword}
               testID="auth-confirm-password-input"
             />
