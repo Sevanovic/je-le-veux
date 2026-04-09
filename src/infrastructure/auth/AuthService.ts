@@ -1,52 +1,41 @@
 import { supabase } from '../api/supabase';
-import { SupportedLanguage } from '../../domain/enums';
+import type { IAuthService } from '../../domain/interfaces';
 import type { User } from '../../domain/entities';
-
-export interface SignUpParams {
-  email: string;
-  password: string;
-  pseudonym: string;
-  preferredLanguage: SupportedLanguage;
-}
-
-export interface SignInParams {
-  email: string;
-  password: string;
-}
+import type { SupportedLanguage } from '../../domain/enums';
 
 /**
- * Service d'authentification — encapsule les appels Supabase Auth.
+ * Supabase implementation of IAuthService.
  *
- * Flux supportés :
- * - Email + mot de passe (inscription + connexion)
- * - Magic link (lien envoyé par email)
- * - Récupération de session persistée
+ * Supported flows:
+ * - Email + password (sign up + sign in)
+ * - Magic link (passwordless via email)
+ * - Session persistence (via AsyncStorage)
  */
-export class AuthService {
-  /**
-   * Inscription par email + mot de passe.
-   * Crée l'utilisateur dans auth.users, le trigger Supabase crée le profil.
-   */
-  async signUp({ email, password, pseudonym, preferredLanguage }: SignUpParams) {
-    // Vérifier que le pseudonyme est disponible
+export class AuthService implements IAuthService {
+  async signUp(params: {
+    email: string;
+    password: string;
+    pseudonym: string;
+    preferredLanguage: SupportedLanguage;
+  }): Promise<{ userId: string }> {
+    // Check pseudonym availability
     const { data: existing } = await supabase
       .from('profiles')
       .select('pseudonym')
-      .eq('pseudonym', pseudonym)
+      .eq('pseudonym', params.pseudonym)
       .maybeSingle();
 
     if (existing) {
       throw new Error('PSEUDONYM_TAKEN');
     }
 
-    // Créer le compte
     const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
+      email: params.email,
+      password: params.password,
       options: {
         data: {
-          pseudonym,
-          preferred_language: preferredLanguage,
+          pseudonym: params.pseudonym,
+          preferred_language: params.preferredLanguage,
         },
       },
     });
@@ -54,65 +43,53 @@ export class AuthService {
     if (error) throw error;
     if (!data.user) throw new Error('SIGNUP_FAILED');
 
-    // Mettre à jour le profil avec le vrai pseudonyme
+    // Update profile with real pseudonym (DB trigger creates a temp one)
     await supabase
       .from('profiles')
       .update({
-        pseudonym,
-        preferred_language: preferredLanguage,
+        pseudonym: params.pseudonym,
+        preferred_language: params.preferredLanguage,
       })
       .eq('id', data.user.id);
 
-    return data;
+    return { userId: data.user.id };
   }
 
-  /**
-   * Connexion par email + mot de passe.
-   */
-  async signIn({ email, password }: SignInParams) {
+  async signIn(params: {
+    email: string;
+    password: string;
+  }): Promise<{ userId: string }> {
     const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
+      email: params.email,
+      password: params.password,
     });
 
     if (error) throw error;
-    return data;
+    if (!data.user) throw new Error('SIGNIN_FAILED');
+
+    return { userId: data.user.id };
   }
 
-  /**
-   * Envoi d'un magic link par email.
-   */
-  async sendMagicLink(email: string) {
+  async sendMagicLink(email: string): Promise<void> {
     const { error } = await supabase.auth.signInWithOtp({
       email,
-      options: {
-        shouldCreateUser: true,
-      },
+      options: { shouldCreateUser: true },
     });
-
     if (error) throw error;
   }
 
-  /**
-   * Déconnexion.
-   */
-  async signOut() {
+  async signOut(): Promise<void> {
     const { error } = await supabase.auth.signOut();
     if (error) throw error;
   }
 
-  /**
-   * Récupère la session courante (persistée via AsyncStorage).
-   */
-  async getSession() {
+  async getSession(): Promise<{ userId: string } | null> {
     const { data, error } = await supabase.auth.getSession();
     if (error) throw error;
-    return data.session;
+    if (!data.session?.user) return null;
+    return { userId: data.session.user.id };
   }
 
-  /**
-   * Récupère le profil complet depuis la table profiles.
-   */
   async getProfile(userId: string): Promise<User | null> {
     const { data, error } = await supabase
       .from('profiles')
@@ -126,7 +103,7 @@ export class AuthService {
     return {
       id: data.id,
       pseudonym: data.pseudonym,
-      email: '', // L'email vient de auth.users, pas de profiles
+      email: '',
       publicKey: data.public_key,
       preferredLanguage: data.preferred_language as SupportedLanguage,
       isAgeVerified: data.is_age_verified,
@@ -135,54 +112,31 @@ export class AuthService {
     };
   }
 
-  /**
-   * Met à jour le profil utilisateur.
-   */
-  async updateProfile(
-    userId: string,
-    updates: {
-      pseudonym?: string;
-      preferredLanguage?: SupportedLanguage;
-      publicKey?: string;
-      isAgeVerified?: boolean;
-      hasCompletedOnboarding?: boolean;
-      avatarUrl?: string;
-    },
-  ) {
-    const mappedUpdates: Record<string, unknown> = {};
-    if (updates.pseudonym !== undefined) mappedUpdates.pseudonym = updates.pseudonym;
-    if (updates.preferredLanguage !== undefined) mappedUpdates.preferred_language = updates.preferredLanguage;
-    if (updates.publicKey !== undefined) mappedUpdates.public_key = updates.publicKey;
-    if (updates.isAgeVerified !== undefined) mappedUpdates.is_age_verified = updates.isAgeVerified;
-    if (updates.hasCompletedOnboarding !== undefined) mappedUpdates.has_completed_onboarding = updates.hasCompletedOnboarding;
-    if (updates.avatarUrl !== undefined) mappedUpdates.avatar_url = updates.avatarUrl;
+  async updateProfile(userId: string, updates: Partial<User>): Promise<void> {
+    const mapped: Record<string, unknown> = {};
+    if (updates.pseudonym !== undefined) mapped.pseudonym = updates.pseudonym;
+    if (updates.preferredLanguage !== undefined) mapped.preferred_language = updates.preferredLanguage;
+    if (updates.publicKey !== undefined) mapped.public_key = updates.publicKey;
+    if (updates.isAgeVerified !== undefined) mapped.is_age_verified = updates.isAgeVerified;
+    if (updates.avatarUrl !== undefined) mapped.avatar_url = updates.avatarUrl;
 
     const { error } = await supabase
       .from('profiles')
-      .update(mappedUpdates)
+      .update(mapped)
       .eq('id', userId);
 
     if (error) throw error;
   }
 
-  /**
-   * Supprime le compte (RGPD).
-   * Note : la suppression de auth.users cascade vers profiles.
-   */
-  async deleteAccount() {
-    // Supabase ne permet pas l'auto-suppression via le client.
-    // Il faut une Edge Function pour ça (Sprint 5).
-    // Pour l'instant on déconnecte simplement.
-    await this.signOut();
-  }
-
-  /**
-   * Écoute les changements d'état d'auth (login, logout, token refresh).
-   */
   onAuthStateChange(
-    callback: (event: string, session: unknown) => void,
-  ) {
-    return supabase.auth.onAuthStateChange(callback);
+    callback: (event: string, userId: string | null) => void,
+  ): { unsubscribe: () => void } {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        callback(event, session?.user?.id ?? null);
+      },
+    );
+    return { unsubscribe: () => subscription.unsubscribe() };
   }
 }
 

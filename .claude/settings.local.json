@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(./node_modules/.bin/tsc --noEmit)",
+      "Bash(node -e ':*)",
+      "Bash(npx expo:*)",
+      "Bash(open -a Simulator)"
+    ]
+  }
+}

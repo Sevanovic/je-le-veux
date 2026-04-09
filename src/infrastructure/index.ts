@@ -11,3 +11,11 @@ export {
   changeLanguage,
   getCurrentLanguage,
 } from './i18n';
+export {
+  consentRepository,
+  ConsentRepository,
+} from './repositories/ConsentRepository';
+export {
+  invitationRepository,
+  InvitationRepository,
+} from './repositories/InvitationRepository';

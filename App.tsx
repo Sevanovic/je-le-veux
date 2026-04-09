@@ -1,4 +1,7 @@
+// ⚠️ This polyfill MUST be the very first import.
+// Provides crypto.getRandomValues() required by TweetNaCl (E2E encryption).
 import 'react-native-get-random-values';
+
 import React, { useEffect, useState, useCallback } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
@@ -6,25 +9,39 @@ import * as SplashScreen from 'expo-splash-screen';
 import { useFonts } from 'expo-font';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+
+// Infrastructure — imported ONLY here for DI container wiring
 import { initI18n } from './src/infrastructure/i18n';
-import { authService } from './src/infrastructure';
-import { secureStorage, STORAGE_KEYS } from './src/infrastructure';
+import { authService } from './src/infrastructure/auth/AuthService';
+import { cryptoService } from './src/infrastructure/crypto/CryptoService';
+import { secureStorage } from './src/infrastructure/storage/SecureStorageService';
+import { consentRepository } from './src/infrastructure/repositories/ConsentRepository';
+import { invitationRepository } from './src/infrastructure/repositories/InvitationRepository';
+
+// Application layer
+import { initContainer, restoreSessionUseCase } from './src/application';
+
+// Presentation layer
 import { useAuthStore } from './src/presentation/hooks';
 import { RootNavigator } from './src/presentation/components/navigation/RootNavigator';
 import { colors } from './src/presentation/theme';
 
-// Empêche le splash screen natif de se cacher automatiquement
+// Prevent native splash screen from hiding automatically
 SplashScreen.preventAutoHideAsync();
 
 /**
- * Point d'entrée de l'application Je Le Veux.
+ * Application entry point — Je Le Veux.
  *
- * Séquence de démarrage :
- * 1. Initialiser i18n (détection langue téléphone ou choix sauvegardé)
- * 2. Restaurer la session Supabase si elle existe
- * 3. Restaurer l'état age/onboarding depuis SecureStore
- * 4. Masquer le splash screen natif
- * 5. Afficher la navigation
+ * Startup sequence:
+ * 1. Wire DI container (infrastructure → application)
+ * 2. Initialize i18n (detect phone language or saved preference)
+ * 3. Restore session via restoreSessionUseCase
+ * 4. Listen for auth state changes
+ * 5. Hide native splash screen
+ * 6. Render navigation
+ *
+ * This is the ONLY file that imports from Infrastructure directly.
+ * All other Presentation files go through the Application layer.
  */
 export default function App() {
   const [i18nReady, setI18nReady] = useState(false);
@@ -32,16 +49,26 @@ export default function App() {
   const { setUser, setAgeVerified, setOnboardingCompleted, setLoading } =
     useAuthStore();
 
-  // Fonts
   const [fontsLoaded] = useFonts({});
 
-  // Init i18n
+  // 1. Wire DI container on first render
+  useEffect(() => {
+    initContainer({
+      auth: authService,
+      crypto: cryptoService,
+      secureStorage: secureStorage,
+      consent: consentRepository,
+      invitation: invitationRepository,
+    });
+  }, []);
+
+  // 2. Initialize i18n
   useEffect(() => {
     async function prepare() {
       try {
         await initI18n();
       } catch (e) {
-        console.warn('i18n initialization error:', e);
+        console.warn('[i18n] Initialization error:', e);
       } finally {
         setI18nReady(true);
       }
@@ -49,48 +76,31 @@ export default function App() {
     prepare();
   }, []);
 
-  // Restore auth session + local state
+  // 3. Restore session via use case + listen for auth changes
   useEffect(() => {
-    async function restoreSession() {
+    async function restore() {
       try {
-        // Restaurer age/onboarding depuis SecureStore
-        try {
-          const ageVerified = await secureStorage.get(STORAGE_KEYS.AGE_VERIFIED);
-          if (ageVerified === 'true') setAgeVerified(true);
+        const result = await restoreSessionUseCase();
 
-          const onboardingDone = await secureStorage.get(STORAGE_KEYS.ONBOARDING_COMPLETED);
-          if (onboardingDone === 'true') setOnboardingCompleted(true);
-        } catch {
-          // SecureStore peut échouer sur le web
-        }
-
-        // Restaurer la session Supabase
-        const session = await authService.getSession();
-        if (session?.user) {
-          const profile = await authService.getProfile(session.user.id);
-          if (profile) {
-            setUser(profile);
-          }
-        }
+        if (result.isAgeVerified) setAgeVerified(true);
+        if (result.hasCompletedOnboarding) setOnboardingCompleted(true);
+        if (result.user) setUser(result.user);
       } catch {
-        // Pas de session — l'utilisateur devra se connecter
+        // No session — user needs to sign in
       } finally {
         setLoading(false);
         setAuthChecked(true);
       }
     }
 
-    restoreSession();
+    restore();
 
-    // Écouter les changements d'auth (login, logout, token refresh)
-    const { data: { subscription } } = authService.onAuthStateChange(
-      async (event, session) => {
-        if (event === 'SIGNED_IN' && session) {
-          const typedSession = session as { user?: { id: string } };
-          if (typedSession.user) {
-            const profile = await authService.getProfile(typedSession.user.id);
-            if (profile) setUser(profile);
-          }
+    // Listen for auth state changes (sign in, sign out, token refresh)
+    const subscription = authService.onAuthStateChange(
+      async (event, userId) => {
+        if (event === 'SIGNED_IN' && userId) {
+          const profile = await authService.getProfile(userId);
+          if (profile) setUser(profile);
         } else if (event === 'SIGNED_OUT') {
           setUser(null);
         }

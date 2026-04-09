@@ -9,12 +9,12 @@ import {
   LanguageSelector,
 } from '../../components';
 import { useAuthStore } from '../../hooks';
-import { authService } from '../../../infrastructure';
+import { signOutUseCase } from '../../../application';
 import { colors, typography, spacing, borderRadius } from '../../theme';
 
 /**
- * Écran Profil — pseudonyme, sélecteur de langue, sécurité, déconnexion.
- * Le changement de langue est instantané grâce à react-i18next.
+ * Profile screen — pseudonym, language selector, security, logout.
+ * Language changes are instant thanks to react-i18next.
  */
 export function ProfileScreen() {
   const { t } = useTranslation();
@@ -30,7 +30,7 @@ export function ProfileScreen() {
           text: t('common.delete'),
           style: 'destructive',
           onPress: () => {
-            // TODO Sprint 5 : use case DeleteAccount (RGPD)
+            // TODO Sprint 5: DeleteAccountUseCase (GDPR)
           },
         },
       ],
@@ -39,9 +39,9 @@ export function ProfileScreen() {
 
   const handleLogout = async () => {
     try {
-      await authService.signOut();
+      await signOutUseCase();
     } catch {
-      // Déconnexion locale même si Supabase échoue
+      // Logout locally even if Supabase call fails
     }
     logout();
   };

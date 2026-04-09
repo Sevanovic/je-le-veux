@@ -50,6 +50,7 @@ export interface Consent {
 export interface CreateConsentDTO {
   initiatorId: string;
   initiatorPseudonym: string;
+  secureCode: string;
   statement: string;
   level: ConsentLevel;
   durationMinutes: number;

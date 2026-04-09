@@ -1,12 +1,12 @@
 import { Consent, CreateConsentDTO } from '../entities/Consent';
 import { User, CreateUserDTO } from '../entities/User';
 import { Invitation } from '../entities/Invitation';
-import { ConsentStatus } from '../enums';
+import { ConsentStatus, SupportedLanguage } from '../enums';
 
 /**
- * Contrat du repository de consentements.
- * L'infrastructure (Supabase) implémente cette interface.
- * Le domain ne connaît jamais l'implémentation.
+ * Contract for the consent repository.
+ * Infrastructure (Supabase) implements this interface.
+ * The domain layer never knows the concrete implementation.
  */
 export interface IConsentRepository {
   create(dto: CreateConsentDTO): Promise<Consent>;
@@ -19,7 +19,7 @@ export interface IConsentRepository {
 }
 
 /**
- * Contrat du repository utilisateurs.
+ * Contract for the user repository.
  */
 export interface IUserRepository {
   create(dto: CreateUserDTO): Promise<User>;
@@ -31,7 +31,7 @@ export interface IUserRepository {
 }
 
 /**
- * Contrat du repository invitations.
+ * Contract for the invitation repository.
  */
 export interface IInvitationRepository {
   create(consentId: string): Promise<Invitation>;
@@ -41,7 +41,32 @@ export interface IInvitationRepository {
 }
 
 /**
- * Contrat du service de chiffrement.
+ * Contract for the authentication service.
+ * Handles sign up, sign in, session management, and profile CRUD.
+ */
+export interface IAuthService {
+  signUp(params: {
+    email: string;
+    password: string;
+    pseudonym: string;
+    preferredLanguage: SupportedLanguage;
+  }): Promise<{ userId: string }>;
+
+  signIn(params: {
+    email: string;
+    password: string;
+  }): Promise<{ userId: string }>;
+
+  sendMagicLink(email: string): Promise<void>;
+  signOut(): Promise<void>;
+  getSession(): Promise<{ userId: string } | null>;
+  getProfile(userId: string): Promise<User | null>;
+  updateProfile(userId: string, updates: Partial<User>): Promise<void>;
+  onAuthStateChange(callback: (event: string, userId: string | null) => void): { unsubscribe: () => void };
+}
+
+/**
+ * Contract for the E2E encryption service.
  */
 export interface ICryptoService {
   generateKeyPair(): Promise<{ publicKey: string; secretKey: string }>;
@@ -50,7 +75,7 @@ export interface ICryptoService {
 }
 
 /**
- * Contrat du service de notifications.
+ * Contract for the push notification service.
  */
 export interface INotificationService {
   sendInvitation(userId: string, initiatorPseudonym: string): Promise<void>;
@@ -60,7 +85,7 @@ export interface INotificationService {
 }
 
 /**
- * Contrat du service de stockage local sécurisé.
+ * Contract for secure local storage (Keychain / Keystore).
  */
 export interface ISecureStorageService {
   save(key: string, value: string): Promise<void>;

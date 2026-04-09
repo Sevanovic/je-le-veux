@@ -10,26 +10,23 @@ import {
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '../../hooks';
-import { authService } from '../../../infrastructure';
-import { getCurrentLanguage } from '../../../infrastructure';
-import { cryptoService } from '../../../infrastructure';
-import { secureStorage, STORAGE_KEYS } from '../../../infrastructure';
-import { isValidPseudonym } from '../../../domain/entities';
-import { SupportedLanguage } from '../../../domain/enums';
+import {
+  signUpUseCase,
+  signInUseCase,
+  sendMagicLinkUseCase,
+} from '../../../application';
+import { getCurrentLanguage } from '../../../infrastructure/i18n';
 import { ScreenWrapper, Input, Button } from '../../components';
-import { colors, typography, spacing, borderRadius } from '../../theme';
+import { colors, typography, spacing } from '../../theme';
 
 type AuthMode = 'signIn' | 'signUp';
 
 /**
- * Écran d'authentification — Login / Inscription / Magic Link.
- * Entièrement bilingue FR/EN.
+ * Authentication screen — Login / Sign up / Magic link.
+ * Fully bilingual FR/EN.
  *
- * Flux inscription :
- * 1. Email + password + pseudonyme
- * 2. Génération paire de clés E2E (TweetNaCl)
- * 3. Stockage clé secrète dans SecureStore
- * 4. Envoi clé publique au profil Supabase
+ * This screen only interacts with the Application layer (use cases).
+ * It never imports infrastructure services directly.
  */
 export function AuthScreen() {
   const { t } = useTranslation();
@@ -45,7 +42,6 @@ export function AuthScreen() {
 
   const isSignUp = mode === 'signUp';
 
-  // ── Validation ──
   function validate(): boolean {
     const newErrors: Record<string, string> = {};
 
@@ -55,89 +51,72 @@ export function AuthScreen() {
     if (password.length < 8) {
       newErrors.password = t('auth.passwordTooShort');
     }
-    if (isSignUp) {
-      if (password !== confirmPassword) {
-        newErrors.confirmPassword = t('auth.passwordMismatch');
-      }
-      if (!isValidPseudonym(pseudonym)) {
-        newErrors.pseudonym = t('errors.pseudonymInvalid');
-      }
+    if (isSignUp && password !== confirmPassword) {
+      newErrors.confirmPassword = t('auth.passwordMismatch');
+    }
+    if (isSignUp && pseudonym.length < 3) {
+      newErrors.pseudonym = t('errors.pseudonymInvalid');
     }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   }
 
-  // ── Sign In ──
+  /**
+   * Map domain error codes to user-facing i18n messages.
+   */
+  function handleError(error: unknown): void {
+    if (!(error instanceof Error)) {
+      Alert.alert(t('common.error'), t('errors.generic'));
+      return;
+    }
+
+    const errorMap: Record<string, () => void> = {
+      PSEUDONYM_TAKEN: () => setErrors({ pseudonym: t('errors.pseudonymTaken') }),
+      INVALID_PSEUDONYM: () => setErrors({ pseudonym: t('errors.pseudonymInvalid') }),
+      INVALID_EMAIL: () => setErrors({ email: t('auth.invalidEmail') }),
+      PASSWORD_TOO_SHORT: () => setErrors({ password: t('auth.passwordTooShort') }),
+    };
+
+    const handler = errorMap[error.message];
+    if (handler) {
+      handler();
+    } else {
+      Alert.alert(t('common.error'), error.message);
+    }
+  }
+
   async function handleSignIn() {
     if (!validate()) return;
     setIsLoading(true);
     try {
-      const { session } = await authService.signIn({ email, password });
-      if (session?.user) {
-        const profile = await authService.getProfile(session.user.id);
-        if (profile) {
-          setUser(profile);
-        }
-      }
-    } catch (error: unknown) {
-      const msg = error instanceof Error ? error.message : t('errors.generic');
-      Alert.alert(t('common.error'), msg);
+      const { user } = await signInUseCase({ email, password });
+      setUser(user);
+    } catch (error) {
+      handleError(error);
     } finally {
       setIsLoading(false);
     }
   }
 
-  // ── Sign Up ──
   async function handleSignUp() {
     if (!validate()) return;
     setIsLoading(true);
     try {
-      const lang = getCurrentLanguage();
-
-      // 1. Créer le compte
-      const { session } = await authService.signUp({
+      const { user } = await signUpUseCase({
         email,
         password,
         pseudonym,
-        preferredLanguage: lang,
+        preferredLanguage: getCurrentLanguage(),
       });
-
-      // 2. Générer la paire de clés E2E
-      const keyPair = await cryptoService.generateKeyPair();
-
-      // 3. Stocker la clé secrète localement (jamais envoyée au serveur)
-      try {
-        await secureStorage.save(STORAGE_KEYS.SECRET_KEY, keyPair.secretKey);
-        await secureStorage.save(STORAGE_KEYS.PUBLIC_KEY, keyPair.publicKey);
-      } catch {
-        // SecureStore peut échouer sur le web
-      }
-
-      // 4. Envoyer la clé publique au profil
-      if (session?.user) {
-        await authService.updateProfile(session.user.id, {
-          publicKey: keyPair.publicKey,
-        });
-
-        const profile = await authService.getProfile(session.user.id);
-        if (profile) {
-          setUser(profile);
-        }
-      }
-    } catch (error: unknown) {
-      if (error instanceof Error && error.message === 'PSEUDONYM_TAKEN') {
-        setErrors({ pseudonym: t('errors.pseudonymTaken') });
-      } else {
-        const msg = error instanceof Error ? error.message : t('errors.generic');
-        Alert.alert(t('common.error'), msg);
-      }
+      setUser(user);
+    } catch (error) {
+      handleError(error);
     } finally {
       setIsLoading(false);
     }
   }
 
-  // ── Magic Link ──
   async function handleMagicLink() {
     if (!email.includes('@')) {
       setErrors({ email: t('auth.invalidEmail') });
@@ -145,11 +124,10 @@ export function AuthScreen() {
     }
     setIsLoading(true);
     try {
-      await authService.sendMagicLink(email);
+      await sendMagicLinkUseCase(email);
       Alert.alert('', t('auth.magicLinkSent'));
-    } catch (error: unknown) {
-      const msg = error instanceof Error ? error.message : t('errors.generic');
-      Alert.alert(t('common.error'), msg);
+    } catch (error) {
+      handleError(error);
     } finally {
       setIsLoading(false);
     }
@@ -172,7 +150,6 @@ export function AuthScreen() {
 
         {/* Form */}
         <View style={styles.form}>
-          {/* Pseudonym (sign up only) */}
           {isSignUp && (
             <Input
               label={t('createConsent.pseudonym')}
@@ -188,7 +165,6 @@ export function AuthScreen() {
             />
           )}
 
-          {/* Email */}
           <Input
             label={t('auth.email')}
             placeholder="email@exemple.com"
@@ -204,7 +180,6 @@ export function AuthScreen() {
             testID="auth-email-input"
           />
 
-          {/* Password */}
           <Input
             label={t('auth.password')}
             placeholder="••••••••"
@@ -220,7 +195,6 @@ export function AuthScreen() {
             testID="auth-password-input"
           />
 
-          {/* Confirm password (sign up only) */}
           {isSignUp && (
             <Input
               label={t('auth.confirmPassword')}
@@ -238,7 +212,6 @@ export function AuthScreen() {
             />
           )}
 
-          {/* Submit button */}
           <Button
             title={isSignUp ? t('auth.signUp') : t('auth.signIn')}
             onPress={isSignUp ? handleSignUp : handleSignIn}
@@ -246,7 +219,6 @@ export function AuthScreen() {
             testID="auth-submit-btn"
           />
 
-          {/* Magic link (sign in only) */}
           {!isSignUp && (
             <>
               <View style={styles.divider}>
@@ -278,9 +250,7 @@ export function AuthScreen() {
           activeOpacity={0.7}
         >
           <Text style={styles.toggleText}>
-            {isSignUp
-              ? t('auth.signIn')
-              : t('auth.signUp')}
+            {isSignUp ? t('auth.signIn') : t('auth.signUp')}
           </Text>
         </TouchableOpacity>
       </KeyboardAvoidingView>
