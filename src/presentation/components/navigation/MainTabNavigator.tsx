@@ -10,6 +10,8 @@ import { ResourcesScreen } from '../../screens/Resources/ResourcesScreen';
 import { ProfileScreen } from '../../screens/Profile/ProfileScreen';
 import { ConfirmationScreen } from '../../screens/Confirmation/ConfirmationScreen';
 import { InvitationReceivedScreen } from '../../screens/InvitationReceived/InvitationReceivedScreen';
+import { JoinInvitationScreen } from '../../screens/JoinInvitation';
+import type { Consent, Invitation } from '../../../domain/entities';
 import { colors, typography, spacing, borderRadius } from '../../theme';
 
 // ── Types ──
@@ -22,8 +24,14 @@ export type MainTabParamList = {
 
 export type HomeStackParamList = {
   Home: undefined;
+  JoinInvitation: undefined;
+  InvitationReceived: {
+    consent: Consent;
+    invitation: Invitation;
+    decryptedStatement: string;
+    decryptedConditions?: string;
+  };
   Confirmation: { consentId: string };
-  InvitationReceived: { invitationId: string };
   Profile: undefined;
 };
 
@@ -39,6 +47,7 @@ function HomeStackNavigator() {
       }}
     >
       <HomeStack.Screen name="Home" component={HomeScreen} />
+      <HomeStack.Screen name="JoinInvitation" component={JoinInvitationScreen} />
       <HomeStack.Screen name="Confirmation" component={ConfirmationScreen} />
       <HomeStack.Screen
         name="InvitationReceived"

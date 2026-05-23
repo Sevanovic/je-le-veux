@@ -146,6 +146,49 @@ export class ConsentRepository implements IConsentRepository {
 
     if (error) throw error;
   }
+
+  subscribeToUserConsents(
+    userId: string,
+    onChange: (consent: Consent) => void,
+  ): { unsubscribe: () => void } {
+    const channel = supabase
+      .channel(`consents:user:${userId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'consents',
+          filter: `initiator_id=eq.${userId}`,
+        },
+        (payload) => {
+          if (payload.new) {
+            onChange(toEntity(payload.new as Record<string, unknown>));
+          }
+        },
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'consents',
+          filter: `receiver_id=eq.${userId}`,
+        },
+        (payload) => {
+          if (payload.new) {
+            onChange(toEntity(payload.new as Record<string, unknown>));
+          }
+        },
+      )
+      .subscribe();
+
+    return {
+      unsubscribe: () => {
+        supabase.removeChannel(channel);
+      },
+    };
+  }
 }
 
 export const consentRepository = new ConsentRepository();

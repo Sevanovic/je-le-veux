@@ -64,7 +64,8 @@
     "expired": "Expired",
     "withdrawn": "Withdrawn",
     "noConsents": "No consents yet",
-    "startFirst": "Create your first mutual consent"
+    "startFirst": "Create your first mutual consent",
+    "joinInvitation": "Join an invitation"
   },
   "createConsent": {
     "title": "New consent",
@@ -106,6 +107,22 @@
     "codeCopied": "Code copied!",
     "backToHome": "Back to home"
   },
+  "joinInvitation": {
+    "title": "Join an invitation",
+    "subtitle": "Enter the code you received or scan the QR code shared by the initiator.",
+    "codeLabel": "Invitation code",
+    "codePlaceholder": "JLV-2026-XXXX-XXXX#...",
+    "scanButton": "Scan QR code",
+    "submitButton": "Continue",
+    "cameraPermission": "Camera permission required to scan.",
+    "cameraPermissionDeniedMessage": "You can enable camera access in settings, or enter the code manually.",
+    "errorInvalidFormat": "Invalid code format. Expected format is JLV-YYYY-XXXX-XXXX#key.",
+    "errorNotFound": "This invitation cannot be found. Check the code.",
+    "errorExpired": "This invitation has expired.",
+    "errorAlreadyUsed": "This invitation has already been used.",
+    "errorDecryptFailed": "Unable to decrypt the statement. The key is invalid.",
+    "errorConsentNotPending": "This consent is no longer awaiting a response."
+  },
   "invitation": {
     "title": "Invitation received",
     "from": "Invitation from",
@@ -115,7 +132,14 @@
     "unsure": "Not sure — I need time",
     "refuse": "I refuse",
     "unsureMessage": "Take all the time you need. No pressure. The invitation remains valid for 24 hours.",
-    "disclaimer": "By accepting, you confirm that you are exercising your free will. You can withdraw your consent at any time."
+    "disclaimer": "By accepting, you confirm that you are exercising your free will. You can withdraw your consent at any time.",
+    "receiverPseudonymLabel": "Your pseudonym",
+    "receiverPseudonymPlaceholder": "Choose a pseudonym for this acceptance",
+    "acceptSuccess": "You freely accepted.",
+    "refuseSuccess": "You refused the invitation.",
+    "errorPseudonymInvalid": "Pseudonym must be 3-30 characters.",
+    "errorAcceptFailed": "Unable to accept. Please try again.",
+    "errorRefuseFailed": "Unable to refuse. Please try again."
   },
   "confirmation": {
     "title": "Mutual consent established",

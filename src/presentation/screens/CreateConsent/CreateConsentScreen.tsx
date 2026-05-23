@@ -52,6 +52,7 @@ export function CreateConsentScreen() {
   // Success state
   const [createdConsent, setCreatedConsent] = useState<Consent | null>(null);
   const [createdInvitation, setCreatedInvitation] = useState<Invitation | null>(null);
+  const [shareCode, setShareCode] = useState<string | null>(null);
   const [codeCopied, setCodeCopied] = useState(false);
 
   const canSubmit = pseudonym.trim().length >= 3 && statement.trim().length > 0;
@@ -72,6 +73,7 @@ export function CreateConsentScreen() {
       addConsent(result.consent);
       setCreatedConsent(result.consent);
       setCreatedInvitation(result.invitation);
+      setShareCode(result.shareCode);
     } catch (error) {
       const message = error instanceof Error ? error.message : '';
       if (message === 'INVALID_STATEMENT') {
@@ -87,15 +89,15 @@ export function CreateConsentScreen() {
   };
 
   const handleShare = async () => {
-    if (!createdConsent) return;
+    if (!shareCode) return;
     await Share.share({
-      message: t('createConsent.shareMessage', { code: createdConsent.secureCode }),
+      message: t('createConsent.shareMessage', { code: shareCode }),
     });
   };
 
   const handleCopyCode = async () => {
-    if (!createdConsent) return;
-    await Clipboard.setStringAsync(createdConsent.secureCode);
+    if (!shareCode) return;
+    await Clipboard.setStringAsync(shareCode);
     setCodeCopied(true);
     setTimeout(() => setCodeCopied(false), 2000);
   };
@@ -111,7 +113,7 @@ export function CreateConsentScreen() {
   };
 
   // Success View
-  if (createdConsent && createdInvitation) {
+  if (createdConsent && createdInvitation && shareCode) {
     return (
       <ScreenWrapper>
         <Header title={t('createConsent.successTitle')} />
@@ -127,7 +129,7 @@ export function CreateConsentScreen() {
 
           <View style={styles.qrContainer}>
             <QRCode
-              value={createdConsent.secureCode}
+              value={shareCode}
               size={200}
               backgroundColor={colors.background.card}
               color={colors.gold.DEFAULT}

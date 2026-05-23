@@ -78,6 +78,54 @@ export class CryptoService implements ICryptoService {
 
     return naclUtil.encodeUTF8(decrypted);
   }
+
+  /**
+   * Generate a random 32-byte symmetric key.
+   * Encoded in base64 for transport in QR codes / shareCode.
+   */
+  async generateSymmetricKey(): Promise<string> {
+    const key = nacl.randomBytes(nacl.secretbox.keyLength);
+    return naclUtil.encodeBase64(key);
+  }
+
+  /**
+   * Encrypt a message with a symmetric key using TweetNaCl secretbox
+   * (XSalsa20-Poly1305). Nonce is prepended to ciphertext, all base64.
+   */
+  async encryptSymmetric(message: string, key: string): Promise<string> {
+    const messageUint8 = naclUtil.decodeUTF8(message);
+    const nonce = nacl.randomBytes(nacl.secretbox.nonceLength);
+    const keyUint8 = naclUtil.decodeBase64(key);
+
+    const encrypted = nacl.secretbox(messageUint8, nonce, keyUint8);
+    if (!encrypted) {
+      throw new Error('Symmetric encryption failed');
+    }
+
+    const fullMessage = new Uint8Array(nonce.length + encrypted.length);
+    fullMessage.set(nonce);
+    fullMessage.set(encrypted, nonce.length);
+
+    return naclUtil.encodeBase64(fullMessage);
+  }
+
+  /**
+   * Decrypt a secretbox ciphertext with the given symmetric key.
+   * Throws if the key is wrong or the ciphertext is corrupted.
+   */
+  async decryptSymmetric(ciphertext: string, key: string): Promise<string> {
+    const fullMessage = naclUtil.decodeBase64(ciphertext);
+    const nonce = fullMessage.slice(0, nacl.secretbox.nonceLength);
+    const message = fullMessage.slice(nacl.secretbox.nonceLength);
+    const keyUint8 = naclUtil.decodeBase64(key);
+
+    const decrypted = nacl.secretbox.open(message, nonce, keyUint8);
+    if (!decrypted) {
+      throw new Error('Symmetric decryption failed — invalid key or corrupted ciphertext');
+    }
+
+    return naclUtil.encodeUTF8(decrypted);
+  }
 }
 
 // Singleton

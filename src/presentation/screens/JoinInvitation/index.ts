@@ -1,0 +1,1 @@
+export { JoinInvitationScreen } from './JoinInvitationScreen';

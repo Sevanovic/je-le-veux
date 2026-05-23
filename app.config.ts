@@ -14,6 +14,20 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
   name: 'Je Le Veux',
   slug: 'je-le-veux',
+  icon: './assets/images/icon.png',
+  splash: {
+    image: './assets/images/splash.png',
+    resizeMode: 'contain',
+    backgroundColor: '#0F0F12',
+  },
+  android: {
+    ...config.android,
+    adaptiveIcon: {
+      foregroundImage: './assets/images/adaptive-icon.png',
+      backgroundColor: '#0F0F12',
+    },
+    package: 'com.jeleveux.app',
+  },
   extra: {
     ...config.extra,
     supabaseUrl: process.env.EXPO_PUBLIC_SUPABASE_URL ?? '',

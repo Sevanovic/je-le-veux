@@ -10,4 +10,7 @@ export {
 export {
   createConsentUseCase,
   createInvitationUseCase,
+  joinInvitationUseCase,
+  acceptInvitationUseCase,
+  refuseInvitationUseCase,
 } from './usecases/consent';

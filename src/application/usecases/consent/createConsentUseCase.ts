@@ -15,6 +15,8 @@ export interface CreateConsentInput {
 export interface CreateConsentOutput {
   consent: Consent;
   invitation: Invitation;
+  /** Format: `JLV-YYYY-XXXX-XXXX#<sessionKey>`. To be encoded in QR / shared. */
+  shareCode: string;
 }
 
 export async function createConsentUseCase(
@@ -26,37 +28,28 @@ export async function createConsentUseCase(
   if (!isValidPseudonym(input.initiatorPseudonym)) {
     throw new Error('INVALID_PSEUDONYM');
   }
-
   if (!input.statement.trim()) {
     throw new Error('INVALID_STATEMENT');
   }
-
   if (input.durationMinutes <= 0) {
     throw new Error('INVALID_DURATION');
   }
 
-  // 2. Retrieve initiator's keys from secure storage
-  const publicKey = await secureStorage.get('jeleveux.public_key');
-  const secretKey = await secureStorage.get('jeleveux.secret_key');
+  // 2. Generate a random session key (symmetric, 32 bytes)
+  const sessionKey = await crypto.generateSymmetricKey();
 
-  if (!publicKey || !secretKey) {
-    throw new Error('MISSING_KEYS');
-  }
-
-  // 3. Encrypt statement with initiator's own public key (Approach B)
-  const encryptedStatement = await crypto.encrypt(
+  // 3. Encrypt statement with the session key
+  const encryptedStatement = await crypto.encryptSymmetric(
     input.statement,
-    publicKey,
-    secretKey,
+    sessionKey,
   );
 
   // 4. Encrypt conditions if present
   let encryptedConditions: string | undefined;
   if (input.conditions?.trim()) {
-    encryptedConditions = await crypto.encrypt(
+    encryptedConditions = await crypto.encryptSymmetric(
       input.conditions,
-      publicKey,
-      secretKey,
+      sessionKey,
     );
   }
 
@@ -74,8 +67,18 @@ export async function createConsentUseCase(
     conditions: encryptedConditions,
   });
 
-  // 7. Create invitation
+  // 7. Persist session key locally so initiator can re-read later
+  try {
+    await secureStorage.save(`jeleveux.session.${createdConsent.id}`, sessionKey);
+  } catch {
+    // SecureStore failure is non-blocking — initiator can recover via shareCode if they kept it
+  }
+
+  // 8. Create invitation
   const createdInvitation = await invitation.create(createdConsent.id);
 
-  return { consent: createdConsent, invitation: createdInvitation };
+  // 9. Build shareCode for out-of-band sharing
+  const shareCode = `${secureCode}#${sessionKey}`;
+
+  return { consent: createdConsent, invitation: createdInvitation, shareCode };
 }

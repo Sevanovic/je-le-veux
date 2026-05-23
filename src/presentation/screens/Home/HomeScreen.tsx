@@ -55,6 +55,12 @@ export function HomeScreen() {
           }
           testID="home-new-consent-btn"
         />
+        <Button
+          title={t('home.joinInvitation')}
+          variant="secondary"
+          onPress={() => navigation.navigate('JoinInvitation')}
+          testID="home-join-invitation-btn"
+        />
       </View>
 
       {/* Recent history */}
@@ -131,6 +137,7 @@ const styles = StyleSheet.create({
     marginBottom: spacing['2xl'],
   },
   cta: {
+    gap: spacing.sm,
     marginBottom: spacing['2xl'],
   },
   sectionTitle: {

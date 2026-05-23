@@ -16,6 +16,15 @@ export interface IConsentRepository {
   findByStatus(userId: string, status: ConsentStatus): Promise<Consent[]>;
   updateStatus(id: string, status: ConsentStatus, metadata?: Record<string, unknown>): Promise<Consent>;
   delete(id: string): Promise<void>;
+
+  /**
+   * Subscribe to changes on consents where the user is initiator OR receiver.
+   * Returns an unsubscribe function. Used by App.tsx for realtime updates.
+   */
+  subscribeToUserConsents(
+    userId: string,
+    onChange: (consent: Consent) => void,
+  ): { unsubscribe: () => void };
 }
 
 /**
@@ -72,6 +81,13 @@ export interface ICryptoService {
   generateKeyPair(): Promise<{ publicKey: string; secretKey: string }>;
   encrypt(message: string, recipientPublicKey: string, senderSecretKey: string): Promise<string>;
   decrypt(encryptedMessage: string, senderPublicKey: string, recipientSecretKey: string): Promise<string>;
+
+  /** Generate a random 32-byte symmetric key, base64 encoded. */
+  generateSymmetricKey(): Promise<string>;
+  /** Encrypt with TweetNaCl secretbox. Nonce prepended to ciphertext, all base64. */
+  encryptSymmetric(message: string, key: string): Promise<string>;
+  /** Decrypt a secretbox ciphertext with the given key. */
+  decryptSymmetric(ciphertext: string, key: string): Promise<string>;
 }
 
 /**

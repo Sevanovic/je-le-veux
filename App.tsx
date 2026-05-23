@@ -22,7 +22,7 @@ import { invitationRepository } from './src/infrastructure/repositories/Invitati
 import { initContainer, restoreSessionUseCase } from './src/application';
 
 // Presentation layer
-import { useAuthStore } from './src/presentation/hooks';
+import { useAuthStore, useConsentStore } from './src/presentation/hooks';
 import { RootNavigator } from './src/presentation/components/navigation/RootNavigator';
 import { colors } from './src/presentation/theme';
 
@@ -109,6 +109,51 @@ export default function App() {
 
     return () => {
       subscription.unsubscribe();
+    };
+  }, []);
+
+  // 4. Realtime: subscribe to consent changes for the authenticated user.
+  // Re-subscribes whenever the auth user changes (sign-in / sign-out).
+  useEffect(() => {
+    let currentSubscription: { unsubscribe: () => void } | null = null;
+
+    const subscribe = (userId: string) => {
+      currentSubscription?.unsubscribe();
+      currentSubscription = consentRepository.subscribeToUserConsents(
+        userId,
+        (updated) => {
+          const store = useConsentStore.getState();
+          const existing = store.consents.find((c) => c.id === updated.id);
+          if (existing) {
+            store.updateConsent(updated.id, updated);
+          } else {
+            store.addConsent(updated);
+          }
+        },
+      );
+    };
+
+    const initialUser = useAuthStore.getState().user;
+    if (initialUser) {
+      subscribe(initialUser.id);
+    }
+
+    const unsubAuth = useAuthStore.subscribe((state, prevState) => {
+      const user = state.user;
+      const prevUser = prevState.user;
+
+      if (prevUser && !user) {
+        currentSubscription?.unsubscribe();
+        currentSubscription = null;
+      }
+      if (user && user.id !== prevUser?.id) {
+        subscribe(user.id);
+      }
+    });
+
+    return () => {
+      unsubAuth();
+      currentSubscription?.unsubscribe();
     };
   }, []);
 

@@ -64,7 +64,8 @@
     "expired": "Expirés",
     "withdrawn": "Retirés",
     "noConsents": "Aucun consentement pour le moment",
-    "startFirst": "Créez votre premier consentement mutuel"
+    "startFirst": "Créez votre premier consentement mutuel",
+    "joinInvitation": "Rejoindre une invitation"
   },
   "createConsent": {
     "title": "Nouveau consentement",
@@ -106,6 +107,22 @@
     "codeCopied": "Code copié !",
     "backToHome": "Retour à l'accueil"
   },
+  "joinInvitation": {
+    "title": "Rejoindre une invitation",
+    "subtitle": "Saisissez le code reçu ou scannez le QR code partagé par l'initiateur.",
+    "codeLabel": "Code d'invitation",
+    "codePlaceholder": "JLV-2026-XXXX-XXXX#...",
+    "scanButton": "Scanner le QR code",
+    "submitButton": "Continuer",
+    "cameraPermission": "Autorisation caméra requise pour scanner.",
+    "cameraPermissionDeniedMessage": "Vous pouvez activer l'accès caméra dans les réglages, ou saisir le code manuellement.",
+    "errorInvalidFormat": "Format de code invalide. Le format attendu est JLV-YYYY-XXXX-XXXX#clé.",
+    "errorNotFound": "Cette invitation est introuvable. Vérifiez le code.",
+    "errorExpired": "Cette invitation a expiré.",
+    "errorAlreadyUsed": "Cette invitation a déjà été utilisée.",
+    "errorDecryptFailed": "Impossible de déchiffrer l'énoncé. La clé est invalide.",
+    "errorConsentNotPending": "Ce consentement n'est plus en attente de réponse."
+  },
   "invitation": {
     "title": "Invitation reçue",
     "from": "Invitation de",
@@ -115,7 +132,14 @@
     "unsure": "Pas sûr(e) — j'ai besoin de temps",
     "refuse": "Je refuse",
     "unsureMessage": "Prenez tout le temps nécessaire. Aucune pression. L'invitation reste valide 24 heures.",
-    "disclaimer": "En acceptant, vous confirmez exercer votre libre arbitre. Vous pouvez retirer votre consentement à tout moment."
+    "disclaimer": "En acceptant, vous confirmez exercer votre libre arbitre. Vous pouvez retirer votre consentement à tout moment.",
+    "receiverPseudonymLabel": "Votre pseudonyme",
+    "receiverPseudonymPlaceholder": "Choisissez un pseudonyme pour cette acceptation",
+    "acceptSuccess": "Vous avez accepté librement.",
+    "refuseSuccess": "Vous avez refusé l'invitation.",
+    "errorPseudonymInvalid": "Le pseudonyme doit contenir 3 à 30 caractères.",
+    "errorAcceptFailed": "Impossible d'accepter. Veuillez réessayer.",
+    "errorRefuseFailed": "Impossible de refuser. Veuillez réessayer."
   },
   "confirmation": {
     "title": "Consentement mutuel établi",

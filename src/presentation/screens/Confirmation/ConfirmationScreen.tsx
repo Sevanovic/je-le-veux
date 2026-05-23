@@ -1,15 +1,38 @@
 import React from 'react';
 import { View, Text, StyleSheet, Alert } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { useRoute, type RouteProp } from '@react-navigation/native';
+import { useConsentStore } from '../../hooks';
 import { ScreenWrapper, Header, Card, Button } from '../../components';
+import type { HomeStackParamList } from '../../components/navigation/MainTabNavigator';
 import { colors, typography, spacing, borderRadius } from '../../theme';
 
-/**
- * Écran de confirmation — les deux parties ont accepté.
- * Affiche l'horodatage, le code sécurisé et le bouton de retrait.
- */
+type Rt = RouteProp<HomeStackParamList, 'Confirmation'>;
+
+const LEVEL_LABEL_KEYS: Record<string, string> = {
+  light: 'createConsent.levelLight',
+  moderate: 'createConsent.levelModerate',
+  intimate: 'createConsent.levelIntimate',
+  custom: 'createConsent.levelCustom',
+};
+
+function formatDate(date: Date | undefined, locale: string): string {
+  if (!date) return '—';
+  return new Intl.DateTimeFormat(locale, {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  }).format(date);
+}
+
 export function ConfirmationScreen() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const route = useRoute<Rt>();
+  const consent = useConsentStore((s) =>
+    s.consents.find((c) => c.id === route.params.consentId),
+  );
 
   const handleWithdraw = () => {
     Alert.alert(
@@ -21,7 +44,7 @@ export function ConfirmationScreen() {
           text: t('common.confirm'),
           style: 'destructive',
           onPress: () => {
-            // TODO Sprint 4 : use case WithdrawConsent
+            // Sprint 4: withdrawConsentUseCase
             Alert.alert('', t('confirmation.withdrawSuccess'));
           },
         },
@@ -29,50 +52,56 @@ export function ConfirmationScreen() {
     );
   };
 
+  if (!consent) {
+    return (
+      <ScreenWrapper>
+        <Header title="" showBack />
+        <View style={styles.center}>
+          <Text style={styles.title}>{t('errors.consentNotFound')}</Text>
+        </View>
+      </ScreenWrapper>
+    );
+  }
+
   return (
     <ScreenWrapper>
       <Header title="" showBack />
 
-      {/* Success icon */}
       <View style={styles.center}>
         <View style={styles.checkCircle}>
-          <Text style={styles.checkMark}>{'\u2713'}</Text>
+          <Text style={styles.checkMark}>{'✓'}</Text>
         </View>
-
         <Text style={styles.title}>{t('confirmation.title')}</Text>
         <Text style={styles.subtitle}>{t('confirmation.subtitle')}</Text>
       </View>
 
-      {/* Details card */}
       <Card variant="success" style={styles.detailsCard}>
         <DetailRow
           label={t('confirmation.initiator')}
-          value="Coeur_Vaillant"
+          value={consent.initiatorPseudonym}
         />
         <DetailRow
           label={t('confirmation.partner')}
-          value="Etoile_du_Soir"
+          value={consent.receiverPseudonym ?? '—'}
         />
         <DetailRow
           label={t('confirmation.level')}
-          value={t('createConsent.levelModerate')}
+          value={t(LEVEL_LABEL_KEYS[consent.level] ?? 'createConsent.levelCustom')}
         />
         <DetailRow
           label={t('confirmation.timestamp')}
-          value="18/03/2026 14:32"
+          value={formatDate(consent.acceptedAt, i18n.language)}
         />
         <DetailRow
           label={t('confirmation.expires')}
-          value="18/03/2026 20:32"
+          value={formatDate(consent.expiresAt, i18n.language)}
         />
 
-        {/* Secure code */}
         <View style={styles.codeBox}>
-          <Text style={styles.code}>{'JLV-2026-A7F3-X9K2'}</Text>
+          <Text style={styles.code}>{consent.secureCode}</Text>
         </View>
       </Card>
 
-      {/* Withdraw button */}
       <View style={styles.withdrawContainer}>
         <Button
           title={t('confirmation.withdraw')}
