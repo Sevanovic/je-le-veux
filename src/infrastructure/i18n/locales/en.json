@@ -16,7 +16,12 @@
     "success": "Success",
     "retry": "Retry",
     "search": "Search",
-    "noResults": "No results"
+    "noResults": "No results",
+    "expiresInMinutes_one": "Expires in {{count}} minute",
+    "expiresInMinutes_other": "Expires in {{count}} minutes",
+    "expiresInHours_one": "Expires in {{count}} hour",
+    "expiresInHours_other": "Expires in {{count}} hours",
+    "expiresInHoursMinutes": "Expires in {{hours}}h{{minutes}}"
   },
   "splash": {
     "enter": "Get started",
@@ -152,7 +157,24 @@
     "secureCode": "Secure code",
     "withdraw": "Withdraw my consent",
     "withdrawConfirm": "Are you sure you want to withdraw your consent? This action is immediate and irreversible.",
-    "withdrawSuccess": "Your consent has been withdrawn. The other party has been notified."
+    "withdrawSuccess": "Your consent has been withdrawn. The other party has been notified.",
+    "statement": "Consent statement",
+    "conditions": "Additional conditions",
+    "statementUnavailable": "Statement unavailable on this device. The local key is missing — sign in from the original device or keep the original shareCode.",
+    "errorWithdrawFailed": "Unable to withdraw. Please try again.",
+    "errorNotActive": "This consent is no longer active.",
+    "errorNotParty": "You are not a party to this consent."
+  },
+  "consentDetail": {
+    "titleActive": "Active consent",
+    "titleWithdrawn": "Withdrawn consent",
+    "titleExpired": "Expired consent",
+    "titleRefused": "Refused consent",
+    "withdrawnBy": "Withdrawn by {{pseudo}} on {{date}}",
+    "expiredAt": "Expired on {{date}}",
+    "refusedAt": "Refused on {{date}}",
+    "notFound": "Consent not found.",
+    "withdrawButton": "Withdraw my consent"
   },
   "history": {
     "title": "History",

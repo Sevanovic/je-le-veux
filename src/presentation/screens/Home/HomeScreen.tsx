@@ -80,7 +80,7 @@ export function HomeScreen() {
               key={consent.id}
               consent={consent}
               onPress={(c) =>
-                navigation.navigate('Confirmation', { consentId: c.id })
+                navigation.navigate('ConsentDetail', { consentId: c.id })
               }
             />
           ))}

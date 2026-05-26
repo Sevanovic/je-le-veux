@@ -11,6 +11,7 @@ import { ProfileScreen } from '../../screens/Profile/ProfileScreen';
 import { ConfirmationScreen } from '../../screens/Confirmation/ConfirmationScreen';
 import { InvitationReceivedScreen } from '../../screens/InvitationReceived/InvitationReceivedScreen';
 import { JoinInvitationScreen } from '../../screens/JoinInvitation';
+import { ConsentDetailScreen } from '../../screens/ConsentDetail';
 import type { Consent, Invitation } from '../../../domain/entities';
 import { colors, typography, spacing, borderRadius } from '../../theme';
 
@@ -30,9 +31,16 @@ export type HomeStackParamList = {
     invitation: Invitation;
     decryptedStatement: string;
     decryptedConditions?: string;
+    sessionKey: string;
   };
   Confirmation: { consentId: string };
+  ConsentDetail: { consentId: string };
   Profile: undefined;
+};
+
+export type HistoryStackParamList = {
+  History: undefined;
+  ConsentDetail: { consentId: string };
 };
 
 // ── Stack navigators inside tabs ──
@@ -49,12 +57,29 @@ function HomeStackNavigator() {
       <HomeStack.Screen name="Home" component={HomeScreen} />
       <HomeStack.Screen name="JoinInvitation" component={JoinInvitationScreen} />
       <HomeStack.Screen name="Confirmation" component={ConfirmationScreen} />
+      <HomeStack.Screen name="ConsentDetail" component={ConsentDetailScreen} />
       <HomeStack.Screen
         name="InvitationReceived"
         component={InvitationReceivedScreen}
       />
       <HomeStack.Screen name="Profile" component={ProfileScreen} />
     </HomeStack.Navigator>
+  );
+}
+
+const HistoryStack = createNativeStackNavigator<HistoryStackParamList>();
+
+function HistoryStackNavigator() {
+  return (
+    <HistoryStack.Navigator
+      screenOptions={{
+        headerShown: false,
+        contentStyle: { backgroundColor: colors.background.primary },
+      }}
+    >
+      <HistoryStack.Screen name="History" component={HistoryScreen} />
+      <HistoryStack.Screen name="ConsentDetail" component={ConsentDetailScreen} />
+    </HistoryStack.Navigator>
   );
 }
 
@@ -125,7 +150,7 @@ export function MainTabNavigator() {
       />
       <Tab.Screen
         name="HistoryTab"
-        component={HistoryScreen}
+        component={HistoryStackNavigator}
         options={{
           tabBarLabel: t('navigation.history'),
           tabBarIcon: ({ focused }) => (

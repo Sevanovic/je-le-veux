@@ -13,4 +13,7 @@ export {
   joinInvitationUseCase,
   acceptInvitationUseCase,
   refuseInvitationUseCase,
+  decryptConsentStatementUseCase,
+  loadUserConsentsUseCase,
+  withdrawConsentUseCase,
 } from './usecases/consent';

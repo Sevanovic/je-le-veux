@@ -12,3 +12,4 @@ export { Header } from './layout/Header';
 // Consent Components
 export { StatusBadge } from './consent/StatusBadge';
 export { ConsentCard } from './consent/ConsentCard';
+export { ConsentDetailsCard } from './consent/ConsentDetailsCard';

@@ -38,7 +38,7 @@ export function InvitationReceivedScreen() {
   const updateConsent = useConsentStore((s) => s.updateConsent);
   const addConsent = useConsentStore((s) => s.addConsent);
 
-  const { consent, invitation, decryptedStatement, decryptedConditions } = route.params;
+  const { consent, invitation, decryptedStatement, decryptedConditions, sessionKey } = route.params;
 
   const [receiverPseudonym, setReceiverPseudonym] = useState(user?.pseudonym ?? '');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -56,6 +56,7 @@ export function InvitationReceivedScreen() {
         invitationId: invitation.id,
         receiverId: user.id,
         receiverPseudonym: receiverPseudonym.trim(),
+        sessionKey,
       });
       addConsent(result.consent);
       updateConsent(result.consent.id, result.consent);

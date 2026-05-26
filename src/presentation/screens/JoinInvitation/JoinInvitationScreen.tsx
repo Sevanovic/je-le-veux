@@ -28,6 +28,7 @@ export function JoinInvitationScreen() {
         invitation: result.invitation,
         decryptedStatement: result.decryptedStatement,
         decryptedConditions: result.decryptedConditions,
+        sessionKey: result.sessionKey,
       });
     } catch (error) {
       const message = error instanceof Error ? error.message : '';

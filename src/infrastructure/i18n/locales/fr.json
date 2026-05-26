@@ -16,7 +16,12 @@
     "success": "Succès",
     "retry": "Réessayer",
     "search": "Rechercher",
-    "noResults": "Aucun résultat"
+    "noResults": "Aucun résultat",
+    "expiresInMinutes_one": "Expire dans {{count}} minute",
+    "expiresInMinutes_other": "Expire dans {{count}} minutes",
+    "expiresInHours_one": "Expire dans {{count}} heure",
+    "expiresInHours_other": "Expire dans {{count}} heures",
+    "expiresInHoursMinutes": "Expire dans {{hours}}h{{minutes}}"
   },
   "splash": {
     "enter": "Commencer",
@@ -152,7 +157,24 @@
     "secureCode": "Code sécurisé",
     "withdraw": "Retirer mon consentement",
     "withdrawConfirm": "Êtes-vous certain(e) de vouloir retirer votre consentement ? Cette action est immédiate et irréversible.",
-    "withdrawSuccess": "Votre consentement a été retiré. L'autre partie a été notifiée."
+    "withdrawSuccess": "Votre consentement a été retiré. L'autre partie a été notifiée.",
+    "statement": "Énoncé du consentement",
+    "conditions": "Conditions supplémentaires",
+    "statementUnavailable": "Énoncé indisponible sur cet appareil. La clé locale est introuvable — reconnectez-vous depuis l'appareil d'origine ou conservez le shareCode original.",
+    "errorWithdrawFailed": "Impossible de retirer. Veuillez réessayer.",
+    "errorNotActive": "Ce consentement n'est plus actif.",
+    "errorNotParty": "Vous n'êtes pas partie à ce consentement."
+  },
+  "consentDetail": {
+    "titleActive": "Consentement actif",
+    "titleWithdrawn": "Consentement retiré",
+    "titleExpired": "Consentement expiré",
+    "titleRefused": "Consentement refusé",
+    "withdrawnBy": "Retiré par {{pseudo}} le {{date}}",
+    "expiredAt": "Expiré le {{date}}",
+    "refusedAt": "Refusé le {{date}}",
+    "notFound": "Consentement introuvable.",
+    "withdrawButton": "Retirer mon consentement"
   },
   "history": {
     "title": "Historique",

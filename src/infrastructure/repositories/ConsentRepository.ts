@@ -80,10 +80,11 @@ export class ConsentRepository implements IConsentRepository {
   }
 
   async findByUserId(userId: string): Promise<Consent[]> {
+    // Fetch consents where user is initiator OR receiver
     const { data, error } = await supabase
       .from('consents')
       .select('*')
-      .eq('initiator_id', userId)
+      .or(`initiator_id.eq.${userId},receiver_id.eq.${userId}`)
       .order('created_at', { ascending: false });
 
     if (error) throw error;

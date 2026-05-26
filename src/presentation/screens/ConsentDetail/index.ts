@@ -1,0 +1,1 @@
+export { ConsentDetailScreen } from './ConsentDetailScreen';

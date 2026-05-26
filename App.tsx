@@ -19,7 +19,11 @@ import { consentRepository } from './src/infrastructure/repositories/ConsentRepo
 import { invitationRepository } from './src/infrastructure/repositories/InvitationRepository';
 
 // Application layer
-import { initContainer, restoreSessionUseCase } from './src/application';
+import {
+  initContainer,
+  restoreSessionUseCase,
+  loadUserConsentsUseCase,
+} from './src/application';
 
 // Presentation layer
 import { useAuthStore, useConsentStore } from './src/presentation/hooks';
@@ -84,7 +88,16 @@ export default function App() {
 
         if (result.isAgeVerified) setAgeVerified(true);
         if (result.hasCompletedOnboarding) setOnboardingCompleted(true);
-        if (result.user) setUser(result.user);
+        if (result.user) {
+          setUser(result.user);
+          // Hydrate consents from Supabase so they survive JS reload / app restart
+          try {
+            const { consents } = await loadUserConsentsUseCase({ userId: result.user.id });
+            useConsentStore.getState().setConsents(consents);
+          } catch (e) {
+            console.warn('[consents] Initial load failed:', e);
+          }
+        }
       } catch {
         // No session — user needs to sign in
       } finally {
@@ -100,9 +113,18 @@ export default function App() {
       async (event, userId) => {
         if (event === 'SIGNED_IN' && userId) {
           const profile = await authService.getProfile(userId);
-          if (profile) setUser(profile);
+          if (profile) {
+            setUser(profile);
+            try {
+              const { consents } = await loadUserConsentsUseCase({ userId: profile.id });
+              useConsentStore.getState().setConsents(consents);
+            } catch (e) {
+              console.warn('[consents] Load on sign-in failed:', e);
+            }
+          }
         } else if (event === 'SIGNED_OUT') {
           setUser(null);
+          useConsentStore.getState().setConsents([]);
         }
       },
     );

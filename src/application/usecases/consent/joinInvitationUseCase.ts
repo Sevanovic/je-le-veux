@@ -13,6 +13,8 @@ export interface JoinInvitationOutput {
   invitation: Invitation;
   decryptedStatement: string;
   decryptedConditions?: string;
+  /** Session key parsed from shareCode — flowed to acceptInvitationUseCase for local persistence. */
+  sessionKey: string;
 }
 
 const SECURE_CODE_REGEX = /^JLV-\d{4}-[A-F0-9]{4}-[A-F0-9]{4}$/;
@@ -85,5 +87,6 @@ export async function joinInvitationUseCase(
     invitation: foundInvitation,
     decryptedStatement,
     decryptedConditions,
+    sessionKey,
   };
 }

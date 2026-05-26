@@ -1,19 +1,21 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, FlatList } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ConsentStatus } from '../../../domain/enums';
 import type { Consent } from '../../../domain/entities';
 import { useConsentStore } from '../../hooks';
 import { ScreenWrapper, Chip, ConsentCard } from '../../components';
+import type { HistoryStackParamList } from '../../components/navigation/MainTabNavigator';
 import { colors, typography, spacing } from '../../theme';
 
 type FilterTab = 'all' | ConsentStatus.ACTIVE | ConsentStatus.EXPIRED | ConsentStatus.WITHDRAWN;
+type Nav = NativeStackNavigationProp<HistoryStackParamList, 'History'>;
 
-/**
- * Écran historique — tous les consentements avec filtres par statut.
- */
 export function HistoryScreen() {
   const { t } = useTranslation();
+  const navigation = useNavigation<Nav>();
   const { consents, getByStatus } = useConsentStore();
   const [activeFilter, setActiveFilter] = useState<FilterTab>('all');
 
@@ -27,8 +29,8 @@ export function HistoryScreen() {
   const filteredConsents =
     activeFilter === 'all' ? consents : getByStatus(activeFilter as ConsentStatus);
 
-  const handlePress = (_consent: Consent) => {
-    // TODO Sprint 4 : naviguer vers le détail du consentement
+  const handlePress = (consent: Consent) => {
+    navigation.navigate('ConsentDetail', { consentId: consent.id });
   };
 
   return (
@@ -37,7 +39,6 @@ export function HistoryScreen() {
         <Text style={styles.title}>{t('history.title')}</Text>
       </View>
 
-      {/* Filter chips */}
       <View style={styles.filters}>
         {filters.map(({ key, label }) => (
           <Chip
@@ -49,7 +50,6 @@ export function HistoryScreen() {
         ))}
       </View>
 
-      {/* Consent list */}
       <FlatList
         data={filteredConsents}
         keyExtractor={(item) => item.id}

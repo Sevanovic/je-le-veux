@@ -8,6 +8,8 @@ export interface AcceptInvitationInput {
   invitationId: string;
   receiverId: string;
   receiverPseudonym: string;
+  /** Session key from the shareCode — persisted locally so receiver can re-read the statement later. */
+  sessionKey: string;
 }
 
 export interface AcceptInvitationOutput {
@@ -17,7 +19,7 @@ export interface AcceptInvitationOutput {
 export async function acceptInvitationUseCase(
   input: AcceptInvitationInput,
 ): Promise<AcceptInvitationOutput> {
-  const { consent, invitation } = getContainer();
+  const { consent, invitation, secureStorage } = getContainer();
 
   // 1. Validate pseudonym
   if (!isValidPseudonym(input.receiverPseudonym)) {
@@ -47,6 +49,13 @@ export async function acceptInvitationUseCase(
 
   // 5. Mark invitation as used
   await invitation.markAsUsed(input.invitationId);
+
+  // 6. Persist session key locally so receiver can re-read the statement on future sessions
+  try {
+    await secureStorage.save(`jeleveux.session.${updated.id}`, input.sessionKey);
+  } catch {
+    // SecureStore failure is non-blocking — receiver can fall back to keeping the shareCode
+  }
 
   return { consent: updated };
 }
