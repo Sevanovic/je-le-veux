@@ -6,4 +6,5 @@ export type {
   ICryptoService,
   INotificationService,
   ISecureStorageService,
+  IBiometricService,
 } from './repositories';

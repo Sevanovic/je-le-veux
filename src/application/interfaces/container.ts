@@ -4,6 +4,7 @@ import type {
   ISecureStorageService,
   IConsentRepository,
   IInvitationRepository,
+  IBiometricService,
 } from '../../domain/interfaces';
 
 /**
@@ -23,6 +24,7 @@ interface ServiceContainer {
   secureStorage: ISecureStorageService;
   consent: IConsentRepository;
   invitation: IInvitationRepository;
+  biometric: IBiometricService;
 }
 
 let container: ServiceContainer | null = null;

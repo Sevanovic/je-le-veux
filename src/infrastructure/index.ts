@@ -19,3 +19,7 @@ export {
   invitationRepository,
   InvitationRepository,
 } from './repositories/InvitationRepository';
+export {
+  biometricService,
+  BiometricService,
+} from './biometrics/BiometricService';

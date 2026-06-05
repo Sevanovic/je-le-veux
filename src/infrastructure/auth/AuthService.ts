@@ -128,6 +128,11 @@ export class AuthService implements IAuthService {
     if (error) throw error;
   }
 
+  async deleteCurrentAccount(): Promise<void> {
+    const { error } = await supabase.rpc('delete_my_account');
+    if (error) throw error;
+  }
+
   onAuthStateChange(
     callback: (event: string, userId: string | null) => void,
   ): { unsubscribe: () => void } {

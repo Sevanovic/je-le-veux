@@ -218,7 +218,40 @@
     "themeSystem": "System",
     "deleteAccount": "Delete my account",
     "deleteAccountConfirm": "This action is irreversible. All your data will be permanently deleted.",
-    "logout": "Sign out"
+    "logout": "Sign out",
+    "editPseudonym": "Edit",
+    "editPseudonymTitle": "Edit pseudonym",
+    "editPseudonymNote": "This change will apply to future consents. Existing consents keep the old pseudonym.",
+    "myData": "My data",
+    "exportData": "Export my data",
+    "exportSuccess": "Export complete.",
+    "exportError": "Unable to export your data.",
+    "biometricsUnavailable": "This device has no biometric sensor.",
+    "biometricsNotEnrolled": "No fingerprint or Face ID set up on this device.",
+    "pseudonymUpdated": "Pseudonym updated.",
+    "errorPseudonymTaken": "This pseudonym is already taken.",
+    "errorPseudonymInvalid": "Pseudonym must be 3-30 characters (letters, digits, _ and -).",
+    "errorUpdateFailed": "Update failed. Please try again."
+  },
+  "deleteAccount": {
+    "title": "Delete my account",
+    "warningTitle": "This action is irreversible",
+    "warningSubtitle": "Deletion is permanent and complies with your right to erasure (GDPR).",
+    "consequence1": "All your consents will be erased",
+    "consequence2": "Your local keys will be destroyed",
+    "consequence3": "This action cannot be undone",
+    "typePseudonymLabel": "Pseudonym",
+    "typePseudonymHint": "Type your pseudonym {{pseudo}} to confirm",
+    "confirmButton": "Delete permanently",
+    "errorMismatch": "The pseudonym you typed does not match.",
+    "errorFailed": "Deletion failed. Please try again."
+  },
+  "biometricLock": {
+    "title": "Authentication required",
+    "subtitle": "Confirm your identity to access the app.",
+    "unlockButton": "Unlock",
+    "errorFailed": "Authentication failed. Please try again.",
+    "errorCancelled": "Authentication cancelled."
   },
   "navigation": {
     "home": "Home",

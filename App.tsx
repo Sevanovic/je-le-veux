@@ -3,7 +3,7 @@
 import 'react-native-get-random-values';
 
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, AppState, type AppStateStatus } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import * as SplashScreen from 'expo-splash-screen';
 import { useFonts } from 'expo-font';
@@ -15,6 +15,7 @@ import { initI18n } from './src/infrastructure/i18n';
 import { authService } from './src/infrastructure/auth/AuthService';
 import { cryptoService } from './src/infrastructure/crypto/CryptoService';
 import { secureStorage } from './src/infrastructure/storage/SecureStorageService';
+import { biometricService } from './src/infrastructure/biometrics/BiometricService';
 import { consentRepository } from './src/infrastructure/repositories/ConsentRepository';
 import { invitationRepository } from './src/infrastructure/repositories/InvitationRepository';
 
@@ -23,11 +24,13 @@ import {
   initContainer,
   restoreSessionUseCase,
   loadUserConsentsUseCase,
+  checkBiometricLockUseCase,
 } from './src/application';
 
 // Presentation layer
 import { useAuthStore, useConsentStore } from './src/presentation/hooks';
 import { RootNavigator } from './src/presentation/components/navigation/RootNavigator';
+import { BiometricLockScreen } from './src/presentation/screens/BiometricLock';
 import { colors } from './src/presentation/theme';
 
 // Prevent native splash screen from hiding automatically
@@ -50,6 +53,8 @@ SplashScreen.preventAutoHideAsync();
 export default function App() {
   const [i18nReady, setI18nReady] = useState(false);
   const [authChecked, setAuthChecked] = useState(false);
+  const [isLocked, setIsLocked] = useState(false);
+  const [biometricChecked, setBiometricChecked] = useState(false);
   const { setUser, setAgeVerified, setOnboardingCompleted, setLoading } =
     useAuthStore();
 
@@ -63,6 +68,7 @@ export default function App() {
       secureStorage: secureStorage,
       consent: consentRepository,
       invitation: invitationRepository,
+      biometric: biometricService,
     });
   }, []);
 
@@ -179,7 +185,46 @@ export default function App() {
     };
   }, []);
 
-  const isReady = i18nReady && authChecked;
+  // 5. Biometric lock at startup + on foreground after >5min idle.
+  useEffect(() => {
+    const FIVE_MIN_MS = 5 * 60 * 1000;
+    let lastBackgroundedAt: number | null = null;
+
+    const runCheck = async () => {
+      try {
+        const result = await checkBiometricLockUseCase();
+        setIsLocked(result.locked);
+      } catch {
+        setIsLocked(false);
+      } finally {
+        setBiometricChecked(true);
+      }
+    };
+
+    // Initial check (cold start)
+    void runCheck();
+
+    // Foreground after >5min idle
+    const subscription = AppState.addEventListener('change', (next: AppStateStatus) => {
+      if (next === 'background' || next === 'inactive') {
+        lastBackgroundedAt = Date.now();
+        return;
+      }
+      if (next === 'active' && lastBackgroundedAt !== null) {
+        const idle = Date.now() - lastBackgroundedAt;
+        lastBackgroundedAt = null;
+        if (idle >= FIVE_MIN_MS) {
+          void runCheck();
+        }
+      }
+    });
+
+    return () => {
+      subscription.remove();
+    };
+  }, []);
+
+  const isReady = i18nReady && authChecked && biometricChecked;
 
   const onLayoutRootView = useCallback(async () => {
     if (isReady) {
@@ -194,11 +239,15 @@ export default function App() {
   return (
     <GestureHandlerRootView style={styles.root}>
       <SafeAreaProvider>
-        <NavigationContainer>
-          <View style={styles.root} onLayout={onLayoutRootView}>
-            <RootNavigator />
-          </View>
-        </NavigationContainer>
+        <View style={styles.root} onLayout={onLayoutRootView}>
+          {isLocked ? (
+            <BiometricLockScreen onUnlock={() => setIsLocked(false)} />
+          ) : (
+            <NavigationContainer>
+              <RootNavigator />
+            </NavigationContainer>
+          )}
+        </View>
       </SafeAreaProvider>
     </GestureHandlerRootView>
   );

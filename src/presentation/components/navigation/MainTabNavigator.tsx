@@ -12,6 +12,8 @@ import { ConfirmationScreen } from '../../screens/Confirmation/ConfirmationScree
 import { InvitationReceivedScreen } from '../../screens/InvitationReceived/InvitationReceivedScreen';
 import { JoinInvitationScreen } from '../../screens/JoinInvitation';
 import { ConsentDetailScreen } from '../../screens/ConsentDetail';
+import { EditPseudonymScreen } from '../../screens/EditPseudonym';
+import { DeleteAccountConfirmScreen } from '../../screens/DeleteAccountConfirm';
 import type { Consent, Invitation } from '../../../domain/entities';
 import { colors, typography, spacing, borderRadius } from '../../theme';
 
@@ -35,6 +37,8 @@ export type HomeStackParamList = {
   };
   Confirmation: { consentId: string };
   ConsentDetail: { consentId: string };
+  EditPseudonym: undefined;
+  DeleteAccountConfirm: undefined;
   Profile: undefined;
 };
 
@@ -63,6 +67,8 @@ function HomeStackNavigator() {
         component={InvitationReceivedScreen}
       />
       <HomeStack.Screen name="Profile" component={ProfileScreen} />
+      <HomeStack.Screen name="EditPseudonym" component={EditPseudonymScreen} />
+      <HomeStack.Screen name="DeleteAccountConfirm" component={DeleteAccountConfirmScreen} />
     </HomeStack.Navigator>
   );
 }

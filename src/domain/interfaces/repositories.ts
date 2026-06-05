@@ -71,6 +71,12 @@ export interface IAuthService {
   getSession(): Promise<{ userId: string } | null>;
   getProfile(userId: string): Promise<User | null>;
   updateProfile(userId: string, updates: Partial<User>): Promise<void>;
+  /**
+   * Delete the current authenticated user account via supabase.rpc('delete_my_account').
+   * Cascades: profile, consents, invitations are removed via FK ON DELETE CASCADE.
+   * The caller must clear local storage and sign out separately.
+   */
+  deleteCurrentAccount(): Promise<void>;
   onAuthStateChange(callback: (event: string, userId: string | null) => void): { unsubscribe: () => void };
 }
 
@@ -107,4 +113,22 @@ export interface ISecureStorageService {
   save(key: string, value: string): Promise<void>;
   get(key: string): Promise<string | null>;
   delete(key: string): Promise<void>;
+  /**
+   * Wipe every jeleveux.* key stored on this device.
+   * Used during account deletion (GDPR right to erasure).
+   * Best-effort: individual key failures are swallowed.
+   */
+  clearAll(): Promise<void>;
+}
+
+/**
+ * Contract for biometric authentication (Face ID, Touch ID, fingerprint).
+ */
+export interface IBiometricService {
+  /** True if the device has biometric hardware. */
+  isAvailable(): Promise<boolean>;
+  /** True if the user has enrolled at least one credential. */
+  isEnrolled(): Promise<boolean>;
+  /** Prompt the user. Returns true on success, false on user cancel / failure. */
+  authenticate(reason?: string): Promise<boolean>;
 }

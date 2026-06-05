@@ -218,7 +218,40 @@
     "themeSystem": "Système",
     "deleteAccount": "Supprimer mon compte",
     "deleteAccountConfirm": "Cette action est irréversible. Toutes vos données seront définitivement supprimées.",
-    "logout": "Se déconnecter"
+    "logout": "Se déconnecter",
+    "editPseudonym": "Modifier",
+    "editPseudonymTitle": "Modifier le pseudonyme",
+    "editPseudonymNote": "Ce changement s'appliquera aux futurs consentements. Les consentements existants conservent l'ancien pseudonyme.",
+    "myData": "Mes données",
+    "exportData": "Exporter mes données",
+    "exportSuccess": "Export terminé.",
+    "exportError": "Impossible d'exporter vos données.",
+    "biometricsUnavailable": "Cet appareil ne dispose pas de capteur biométrique.",
+    "biometricsNotEnrolled": "Aucune empreinte ni Face ID configuré sur cet appareil.",
+    "pseudonymUpdated": "Pseudonyme mis à jour.",
+    "errorPseudonymTaken": "Ce pseudonyme est déjà utilisé.",
+    "errorPseudonymInvalid": "Le pseudonyme doit contenir 3 à 30 caractères (lettres, chiffres, _ et -).",
+    "errorUpdateFailed": "La mise à jour a échoué. Veuillez réessayer."
+  },
+  "deleteAccount": {
+    "title": "Supprimer mon compte",
+    "warningTitle": "Cette action est irréversible",
+    "warningSubtitle": "La suppression est définitive et conforme à votre droit à l'effacement (RGPD).",
+    "consequence1": "Tous vos consentements seront effacés",
+    "consequence2": "Vos clés locales seront détruites",
+    "consequence3": "Cette action est irréversible",
+    "typePseudonymLabel": "Pseudonyme",
+    "typePseudonymHint": "Tapez votre pseudonyme {{pseudo}} pour confirmer",
+    "confirmButton": "Supprimer définitivement",
+    "errorMismatch": "Le pseudonyme saisi ne correspond pas.",
+    "errorFailed": "La suppression a échoué. Veuillez réessayer."
+  },
+  "biometricLock": {
+    "title": "Authentification requise",
+    "subtitle": "Confirmez votre identité pour accéder à l'application.",
+    "unlockButton": "Déverrouiller",
+    "errorFailed": "L'authentification a échoué. Veuillez réessayer.",
+    "errorCancelled": "Authentification annulée."
   },
   "navigation": {
     "home": "Accueil",

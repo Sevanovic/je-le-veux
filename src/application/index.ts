@@ -17,3 +17,12 @@ export {
   loadUserConsentsUseCase,
   withdrawConsentUseCase,
 } from './usecases/consent';
+
+export {
+  checkBiometricLockUseCase,
+  toggleBiometricsUseCase,
+  toggleNotificationsUseCase,
+  updatePseudonymUseCase,
+  exportUserDataUseCase,
+  deleteAccountUseCase,
+} from './usecases/profile';
