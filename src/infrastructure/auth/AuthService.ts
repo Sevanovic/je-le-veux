@@ -109,6 +109,7 @@ export class AuthService implements IAuthService {
       isAgeVerified: data.is_age_verified,
       createdAt: new Date(data.created_at),
       avatarUrl: data.avatar_url ?? undefined,
+      termsAcceptedAt: data.terms_accepted_at ? new Date(data.terms_accepted_at) : undefined,
     };
   }
 
@@ -119,6 +120,11 @@ export class AuthService implements IAuthService {
     if (updates.publicKey !== undefined) mapped.public_key = updates.publicKey;
     if (updates.isAgeVerified !== undefined) mapped.is_age_verified = updates.isAgeVerified;
     if (updates.avatarUrl !== undefined) mapped.avatar_url = updates.avatarUrl;
+    if (updates.termsAcceptedAt !== undefined) {
+      mapped.terms_accepted_at = updates.termsAcceptedAt instanceof Date
+        ? updates.termsAcceptedAt.toISOString()
+        : updates.termsAcceptedAt;
+    }
 
     const { error } = await supabase
       .from('profiles')

@@ -16,7 +16,10 @@ import {
   sendMagicLinkUseCase,
 } from '../../../application';
 import { getCurrentLanguage } from '../../../infrastructure/i18n';
-import { ScreenWrapper, Input, Button } from '../../components';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import type { RootStackParamList } from '../../components/navigation/RootNavigator';
+import { ScreenWrapper, Input, Button, CheckboxRow } from '../../components';
 import { colors, typography, spacing } from '../../theme';
 
 type AuthMode = 'signIn' | 'signUp';
@@ -39,6 +42,8 @@ export function AuthScreen() {
   const [pseudonym, setPseudonym] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [termsAccepted, setTermsAccepted] = useState(false);
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   const isSignUp = mode === 'signUp';
 
@@ -76,6 +81,7 @@ export function AuthScreen() {
       INVALID_PSEUDONYM: () => setErrors({ pseudonym: t('errors.pseudonymInvalid') }),
       INVALID_EMAIL: () => setErrors({ email: t('auth.invalidEmail') }),
       PASSWORD_TOO_SHORT: () => setErrors({ password: t('auth.passwordTooShort') }),
+      TERMS_NOT_ACCEPTED: () => Alert.alert(t('common.error'), t('auth.errorTermsNotAccepted')),
     };
 
     const handler = errorMap[error.message];
@@ -108,6 +114,7 @@ export function AuthScreen() {
         password,
         pseudonym,
         preferredLanguage: getCurrentLanguage(),
+        termsAccepted,
       });
       setUser(user);
     } catch (error) {
@@ -212,10 +219,36 @@ export function AuthScreen() {
             />
           )}
 
+          {isSignUp && (
+            <CheckboxRow
+              checked={termsAccepted}
+              onToggle={() => setTermsAccepted(!termsAccepted)}
+              testID="auth-terms-checkbox"
+            >
+              <Text style={styles.termsText}>
+                {t('auth.termsAcceptancePrefix')}
+                <Text
+                  style={styles.termsLink}
+                  onPress={() => navigation.navigate('Content', { contentKey: 'terms' })}
+                >
+                  {t('auth.termsLink')}
+                </Text>
+                {t('auth.termsAcceptanceMiddle')}
+                <Text
+                  style={styles.termsLink}
+                  onPress={() => navigation.navigate('Content', { contentKey: 'privacyPolicy' })}
+                >
+                  {t('auth.privacyPolicyLink')}
+                </Text>
+              </Text>
+            </CheckboxRow>
+          )}
+
           <Button
             title={isSignUp ? t('auth.signUp') : t('auth.signIn')}
             onPress={isSignUp ? handleSignUp : handleSignIn}
             loading={isLoading}
+            disabled={isSignUp && !termsAccepted}
             testID="auth-submit-btn"
           />
 
@@ -312,5 +345,15 @@ const styles = StyleSheet.create({
     fontFamily: typography.fontFamily.bodyMedium,
     fontSize: typography.fontSize.md,
     color: colors.gold.DEFAULT,
+  },
+  termsText: {
+    fontFamily: typography.fontFamily.body,
+    fontSize: typography.fontSize.sm,
+    color: colors.text.secondary,
+    lineHeight: 20,
+  },
+  termsLink: {
+    color: colors.gold.DEFAULT,
+    fontFamily: typography.fontFamily.bodyMedium,
   },
 });

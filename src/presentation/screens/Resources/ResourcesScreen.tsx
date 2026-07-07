@@ -1,32 +1,44 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ScreenWrapper, Card } from '../../components';
+import type { RootStackParamList } from '../../components/navigation/RootNavigator';
+import type { ContentKey } from '../../content';
 import { colors, typography, spacing } from '../../theme';
+
+type Nav = NativeStackNavigationProp<RootStackParamList>;
 
 /**
  * Écran Ressources — contenu éducatif, cadre légal, lignes d'écoute.
  * Tout le contenu est bilingue via i18n.
+ * Chaque carte ouvre une ContentScreen modale via le RootNavigator.
  */
 export function ResourcesScreen() {
   const { t } = useTranslation();
+  const navigation = useNavigation<Nav>();
 
-  const resources = [
+  const resources: Array<{ titleKey: string; descKey: string; contentKey: ContentKey }> = [
     {
       titleKey: 'resources.whatIsConsent',
       descKey: 'resources.whatIsConsentDesc',
+      contentKey: 'consent',
     },
     {
       titleKey: 'resources.legalFramework',
       descKey: 'resources.legalFrameworkDesc',
+      contentKey: 'legalFramework',
     },
     {
       titleKey: 'resources.helpline',
       descKey: 'resources.helplineDesc',
+      contentKey: 'helpline',
     },
     {
       titleKey: 'resources.privacy',
       descKey: 'resources.privacyDesc',
+      contentKey: 'privacy',
     },
   ];
 
@@ -37,13 +49,17 @@ export function ResourcesScreen() {
       </View>
 
       <View style={styles.list}>
-        {resources.map((res, idx) => (
-          <Card key={idx}>
+        {resources.map((res) => (
+          <Card key={res.contentKey}>
             <Text style={styles.cardTitle}>{t(res.titleKey)}</Text>
             <Text style={styles.cardDesc}>{t(res.descKey)}</Text>
-            <TouchableOpacity style={styles.link}>
+            <TouchableOpacity
+              style={styles.link}
+              onPress={() => navigation.navigate('Content', { contentKey: res.contentKey })}
+              testID={`resource-link-${res.contentKey}`}
+            >
               <Text style={styles.linkText}>
-                {t('resources.learnMore')} {'\u2192'}
+                {t('resources.learnMore')} {'→'}
               </Text>
             </TouchableOpacity>
           </Card>

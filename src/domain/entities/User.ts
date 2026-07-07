@@ -12,6 +12,7 @@ export interface User {
   readonly isAgeVerified: boolean;
   readonly createdAt: Date;
   readonly avatarUrl?: string;
+  readonly termsAcceptedAt?: Date;
 }
 
 /**

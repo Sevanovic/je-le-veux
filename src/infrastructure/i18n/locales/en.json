@@ -59,7 +59,12 @@
     "magicLinkSent": "A sign-in link has been sent to your email address.",
     "invalidEmail": "Invalid email address",
     "passwordTooShort": "Password must be at least 8 characters",
-    "passwordMismatch": "Passwords do not match"
+    "passwordMismatch": "Passwords do not match",
+    "termsAcceptancePrefix": "I accept the ",
+    "termsLink": "Terms of Service",
+    "termsAcceptanceMiddle": " and the ",
+    "privacyPolicyLink": "Privacy Policy",
+    "errorTermsNotAccepted": "You must accept the Terms and Privacy Policy."
   },
   "home": {
     "greeting": "Hello",
@@ -231,7 +236,11 @@
     "pseudonymUpdated": "Pseudonym updated.",
     "errorPseudonymTaken": "This pseudonym is already taken.",
     "errorPseudonymInvalid": "Pseudonym must be 3-30 characters (letters, digits, _ and -).",
-    "errorUpdateFailed": "Update failed. Please try again."
+    "errorUpdateFailed": "Update failed. Please try again.",
+    "legal": "Legal",
+    "terms": "Terms of Service",
+    "privacyPolicy": "Privacy Policy",
+    "legalMentions": "Legal notices"
   },
   "deleteAccount": {
     "title": "Delete my account",
@@ -252,6 +261,132 @@
     "unlockButton": "Unlock",
     "errorFailed": "Authentication failed. Please try again.",
     "errorCancelled": "Authentication cancelled."
+  },
+  "content": {
+    "lastUpdated": "Last updated: {{date}}",
+
+    "consent": {
+      "title": "What is consent?",
+      "intro": "Consent is an agreement between two adults to share a moment, an activity, an experience. It must be given consciously, without pressure or coercion.",
+      "flerrTitle": "The 5 FLERR principles",
+      "flerrFree": "Free: given without pressure, threat, or manipulation.",
+      "flerrInformed": "Informed: each party understands what they are consenting to.",
+      "flerrExplicit": "Explicit: expressed clearly, not assumed or presumed.",
+      "flerrRevocable": "Revocable: can be withdrawn at any moment, without justification.",
+      "flerrRenewable": "Renewable: past consent does not apply to the future.",
+      "importantTitle": "Important",
+      "importantBody": "This app is a communication tool between consenting adults. It does not replace verbal communication, mutual listening, or any applicable legal framework."
+    },
+
+    "legalFramework": {
+      "title": "Legal framework",
+      "intro": "In France and most jurisdictions, consent is central to criminal law. Its absence characterizes serious offenses such as sexual assault and rape.",
+      "frenchLawTitle": "French law",
+      "frenchLawBody": "Article 222-22 of the French Penal Code defines sexual assault as 'any sexual attack committed with violence, coercion, threat, or surprise' — meaning, in the absence of consent.",
+      "frenchLawArticle": "Since the law of April 21, 2021, any sexual act by an adult on a minor under 15 is qualified as rape or sexual assault, without needing to prove the absence of consent.",
+      "importantTitle": "This app is not legal proof",
+      "importantBody": "A consent recorded in Je Le Veux does not constitute admissible evidence in court. Consent can be withdrawn at any time, including during the interaction. In case of doubt or emergency, contact your local authorities or a helpline immediately."
+    },
+
+    "helpline": {
+      "title": "Helplines and support",
+      "intro": "If you or someone you know is in distress, please call. These services are free, anonymous, and confidential.",
+      "frTitle": "France",
+      "fr3919": "3919 — Violences Femmes Info",
+      "frPolice": "17 — Police emergency",
+      "frSos": "116 006 — Victim assistance",
+      "enTitle": "International (English-speaking)",
+      "usRainn": "RAINN (United States)",
+      "ukRefuge": "Refuge (United Kingdom)",
+      "internationalNote": "Outside these countries, contact local emergency services or a victim support organization near you."
+    },
+
+    "privacy": {
+      "title": "Security and privacy",
+      "intro": "Je Le Veux is designed to protect your privacy by default. Here is how.",
+      "e2eTitle": "End-to-end encryption",
+      "e2eBody": "Each consent statement is encrypted with a session key generated locally, never transmitted to our server. Only those with the share code can decrypt the content. Our team and our hosts cannot read your statements.",
+      "storageTitle": "Minimal storage",
+      "storageBody": "We only store what is strictly necessary for the app to function: your pseudonym, your email (for authentication), your public key, and consent metadata (level, duration, status). No plaintext content, no tracking, no advertising.",
+      "rightsTitle": "Your rights",
+      "rightsBody": "You can export all your data as JSON from the Profile screen, or permanently delete your account at any time. These rights comply with GDPR (articles 15, 16, 17, 20)."
+    },
+
+    "terms": {
+      "title": "Terms of Service",
+      "preamble": "These Terms of Service ('Terms') govern your use of the mobile application Je Le Veux (the 'App'). By creating an account, you acknowledge that you have read and accepted these Terms in full.",
+      "objectTitle": "1. Purpose",
+      "objectBody": "The Je Le Veux App is a communication tool that allows two adults to formalize a mutual, free, and explicit agreement before an interaction. It does not substitute for any legal framework, nor for verbal communication, nor for the effective consent that must be maintained throughout the interaction.",
+      "eligibilityTitle": "2. Eligibility",
+      "eligibilityBody": "Use of the App is reserved for:",
+      "eligibilityBullet1": "Adult individuals (18 years or older).",
+      "eligibilityBullet2": "Strictly personal, non-commercial use.",
+      "accountTitle": "3. User account",
+      "accountBody": "You are solely responsible for the confidentiality of your credentials. You agree to provide accurate information at registration and to keep it up to date. You can delete your account at any time from the Profile screen.",
+      "serviceTitle": "4. How the service works",
+      "serviceBody": "The App lets you create a consent, send it to another person via a secure code, and receive their acceptance or refusal. All exchanged content is end-to-end encrypted: we cannot access its plaintext.",
+      "conductTitle": "5. User commitments",
+      "conductBody": "By using the App, you agree to:",
+      "conductBullet1": "Respect other users and not use the App for harassment, threats, or coercion.",
+      "conductBullet2": "Not create fraudulent or bad-faith consents.",
+      "conductBullet3": "Respect the revocable and renewable nature of consent: a consent formalized in the App does not replace ongoing communication with the other party.",
+      "liabilityTitle": "6. Liability",
+      "liabilityBody": "The publisher cannot be held responsible for users' use of the App, nor for any failure of one party to respect a consent. The App is a communication tool; it does not guarantee the effective respect of consent, nor its evidentiary value before any court.",
+      "ipTitle": "7. Intellectual property",
+      "ipBody": "All elements of the App (interface, design, source code, trademark) are protected by intellectual property law. Any reproduction, distribution, or commercial use without express authorization is prohibited.",
+      "terminationTitle": "8. Termination",
+      "terminationBody": "You can delete your account at any time, which results in the permanent deletion of all your data. We reserve the right to suspend or delete an account in case of serious breach of these Terms.",
+      "changesTitle": "9. Changes to the Terms",
+      "changesBody": "We may modify these Terms. Any substantial change will be notified to you in the App with a re-acceptance request.",
+      "jurisdictionTitle": "10. Governing law and jurisdiction",
+      "jurisdictionBody": "These Terms are governed by French law. Any dispute will be submitted to the competent French courts.",
+      "contactTitle": "11. Contact",
+      "contactEmail": "Email us"
+    },
+
+    "privacyPolicy": {
+      "title": "Privacy Policy",
+      "preamble": "This Privacy Policy describes how Je Le Veux collects, uses, and protects your personal data, in compliance with the General Data Protection Regulation (GDPR).",
+      "controllerTitle": "1. Data controller",
+      "controllerBody": "The data controller is the publisher of the Je Le Veux App. You can contact them at the address listed at the end of this document.",
+      "dataTitle": "2. Data collected",
+      "dataBody": "We collect only what is strictly necessary:",
+      "dataBullet1": "Your email address (for authentication).",
+      "dataBullet2": "Your pseudonym (visible to other users you interact with).",
+      "dataBullet3": "Your public encryption key (to enable local decryption).",
+      "dataBullet4": "Your consents' metadata (level, duration, status, timestamps) — never their plaintext content.",
+      "purposeTitle": "3. Processing purposes",
+      "purposeBody": "Your data is used to: authenticate your access, allow consent exchanges between users, and ensure the security and legal compliance of the service. We never use your data for advertising or profiling.",
+      "basisTitle": "4. Legal basis",
+      "basisBody": "Processing your data is based on the performance of the contract (your use of the App after accepting the Terms) and on your explicit consent at registration.",
+      "retentionTitle": "5. Retention period",
+      "retentionBody": "Your data is kept as long as your account is active. You can delete it at any time from the Profile screen — deletion is immediate and irreversible.",
+      "sharingTitle": "6. Sharing with third parties",
+      "sharingBody": "We do not share any data with third parties for commercial purposes. Only our host (Supabase, based in Europe) technically processes your data to operate the service.",
+      "rightsTitle": "7. Your rights",
+      "rightsBody": "Under GDPR, you have the following rights:",
+      "rightsAccess": "Right of access: export all your data as JSON.",
+      "rightsRectify": "Right of rectification: modify your pseudonym at any time.",
+      "rightsErasure": "Right to erasure: permanently delete your account.",
+      "rightsPortability": "Right to portability: retrieve your data in a readable format.",
+      "rightsOppose": "Right to object: contact us with any objection to processing.",
+      "securityTitle": "8. Security",
+      "securityBody": "All communications with our servers are encrypted (TLS). Consent statements are end-to-end encrypted before transmission: we technically do not have access to their content.",
+      "contactTitle": "9. Contact",
+      "contactEmail": "Contact us"
+    },
+
+    "legalMentions": {
+      "title": "Legal notices",
+      "editorTitle": "Publisher",
+      "editorBody": "Je Le Veux is published in a personal capacity. For any publication-related question, use the contact address below.",
+      "directorTitle": "Publication director",
+      "directorBody": "The publication director is the App's publisher.",
+      "hostTitle": "Host",
+      "hostBody": "The App is hosted by Supabase (Singapore Pte. Ltd.), with infrastructure located in Europe.",
+      "contactTitle": "Contact",
+      "contactEmail": "Email us"
+    }
   },
   "navigation": {
     "home": "Home",

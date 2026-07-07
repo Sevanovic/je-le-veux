@@ -5,6 +5,7 @@ export {
   sendMagicLinkUseCase,
   signOutUseCase,
   restoreSessionUseCase,
+  acceptTermsUseCase,
 } from './usecases/auth';
 
 export {

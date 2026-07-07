@@ -3,21 +3,23 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useAuthStore } from '../../hooks';
 import { AuthNavigator } from './AuthNavigator';
 import { MainTabNavigator } from './MainTabNavigator';
+import { ContentScreen } from '../../screens/Content';
+import type { ContentKey } from '../../content';
 import { colors } from '../../theme';
 
 export type RootStackParamList = {
   Auth: undefined;
   Main: undefined;
+  Content: { contentKey: ContentKey };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 /**
  * Navigateur racine.
- * Redirige vers Auth ou Main selon l'état d'authentification.
- *
- * Sprint 1 : auth complète via Supabase.
- * Condition : age vérifié + onboarding terminé + authentifié.
+ * - Auth ou Main selon l'état d'authentification.
+ * - Content présenté en modal au-dessus, accessible depuis n'importe quel
+ *   sous-stack via navigation.navigate('Content', { contentKey: ... }).
  */
 export function RootNavigator() {
   const { isAuthenticated, isAgeVerified, hasCompletedOnboarding } =
@@ -38,6 +40,11 @@ export function RootNavigator() {
       ) : (
         <Stack.Screen name="Auth" component={AuthNavigator} />
       )}
+      <Stack.Screen
+        name="Content"
+        component={ContentScreen}
+        options={{ presentation: 'modal' }}
+      />
     </Stack.Navigator>
   );
 }

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Alert, Switch } from 'react-native';
+import { View, Text, StyleSheet, Alert, Switch, TouchableOpacity } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -20,9 +20,11 @@ import {
   exportUserDataUseCase,
 } from '../../../application';
 import type { HomeStackParamList } from '../../components/navigation/MainTabNavigator';
+import type { RootStackParamList } from '../../components/navigation/RootNavigator';
 import { colors, typography, spacing, borderRadius } from '../../theme';
 
 type Nav = NativeStackNavigationProp<HomeStackParamList, 'Profile'>;
+type RootNav = NativeStackNavigationProp<RootStackParamList>;
 
 export function ProfileScreen() {
   const { t } = useTranslation();
@@ -178,6 +180,37 @@ export function ProfileScreen() {
         </View>
       </Card>
 
+      {/* Legal */}
+      <Card style={styles.section}>
+        <Text style={styles.sectionLabel}>{t('profile.legal')}</Text>
+        <View style={styles.legalRows}>
+          <TouchableOpacity
+            onPress={() => (navigation as unknown as RootNav).navigate('Content', { contentKey: 'terms' })}
+            style={styles.legalRow}
+            testID="profile-terms-link"
+          >
+            <Text style={styles.legalLink}>{t('profile.terms')}</Text>
+            <Text style={styles.legalArrow}>{'→'}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => (navigation as unknown as RootNav).navigate('Content', { contentKey: 'privacyPolicy' })}
+            style={styles.legalRow}
+            testID="profile-privacy-link"
+          >
+            <Text style={styles.legalLink}>{t('profile.privacyPolicy')}</Text>
+            <Text style={styles.legalArrow}>{'→'}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => (navigation as unknown as RootNav).navigate('Content', { contentKey: 'legalMentions' })}
+            style={styles.legalRow}
+            testID="profile-mentions-link"
+          >
+            <Text style={styles.legalLink}>{t('profile.legalMentions')}</Text>
+            <Text style={styles.legalArrow}>{'→'}</Text>
+          </TouchableOpacity>
+        </View>
+      </Card>
+
       {/* Sign out */}
       <View style={styles.signoutContainer}>
         <Button
@@ -257,5 +290,26 @@ const styles = StyleSheet.create({
   },
   signoutContainer: {
     marginTop: spacing.lg,
+  },
+  legalRows: {
+    gap: 0,
+  },
+  legalRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: spacing.md,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border.subtle,
+  },
+  legalLink: {
+    fontFamily: typography.fontFamily.bodyMedium,
+    fontSize: typography.fontSize.md,
+    color: colors.text.primary,
+  },
+  legalArrow: {
+    fontFamily: typography.fontFamily.body,
+    fontSize: typography.fontSize.md,
+    color: colors.gold.DEFAULT,
   },
 });

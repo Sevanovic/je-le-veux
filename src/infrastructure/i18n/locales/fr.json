@@ -59,7 +59,12 @@
     "magicLinkSent": "Un lien de connexion a été envoyé à votre adresse e-mail.",
     "invalidEmail": "Adresse e-mail invalide",
     "passwordTooShort": "Le mot de passe doit contenir au moins 8 caractères",
-    "passwordMismatch": "Les mots de passe ne correspondent pas"
+    "passwordMismatch": "Les mots de passe ne correspondent pas",
+    "termsAcceptancePrefix": "J'accepte les ",
+    "termsLink": "Conditions Générales d'Utilisation",
+    "termsAcceptanceMiddle": " et la ",
+    "privacyPolicyLink": "Politique de confidentialité",
+    "errorTermsNotAccepted": "Vous devez accepter les CGU et la Politique de confidentialité."
   },
   "home": {
     "greeting": "Bonjour",
@@ -231,7 +236,11 @@
     "pseudonymUpdated": "Pseudonyme mis à jour.",
     "errorPseudonymTaken": "Ce pseudonyme est déjà utilisé.",
     "errorPseudonymInvalid": "Le pseudonyme doit contenir 3 à 30 caractères (lettres, chiffres, _ et -).",
-    "errorUpdateFailed": "La mise à jour a échoué. Veuillez réessayer."
+    "errorUpdateFailed": "La mise à jour a échoué. Veuillez réessayer.",
+    "legal": "Légal",
+    "terms": "Conditions Générales d'Utilisation",
+    "privacyPolicy": "Politique de confidentialité",
+    "legalMentions": "Mentions légales"
   },
   "deleteAccount": {
     "title": "Supprimer mon compte",
@@ -252,6 +261,132 @@
     "unlockButton": "Déverrouiller",
     "errorFailed": "L'authentification a échoué. Veuillez réessayer.",
     "errorCancelled": "Authentification annulée."
+  },
+  "content": {
+    "lastUpdated": "Dernière mise à jour : {{date}}",
+
+    "consent": {
+      "title": "Qu'est-ce que le consentement ?",
+      "intro": "Le consentement est un accord entre deux personnes adultes pour partager un moment, une activité, une expérience. Il doit être donné en pleine conscience, sans pression ni contrainte.",
+      "flerrTitle": "Les 5 principes FLERR",
+      "flerrFree": "Libre : donné sans pression, menace, ni manipulation.",
+      "flerrInformed": "Éclairé : chaque partie comprend ce à quoi elle consent.",
+      "flerrExplicit": "Explicite : exprimé clairement, pas supposé ni présumé.",
+      "flerrRevocable": "Révocable : peut être retiré à tout instant, sans justification.",
+      "flerrRenewable": "Renouvelable : un consentement passé ne vaut pas pour l'avenir.",
+      "importantTitle": "Important",
+      "importantBody": "Cette application est un outil de communication entre adultes consentants. Elle ne remplace pas la communication verbale, l'écoute mutuelle, ni le cadre juridique applicable."
+    },
+
+    "legalFramework": {
+      "title": "Cadre juridique",
+      "intro": "En France, le consentement est une notion centrale du droit pénal. Son absence caractérise certaines infractions graves (agression sexuelle, viol).",
+      "frenchLawTitle": "Droit français",
+      "frenchLawBody": "L'article 222-22 du Code pénal définit l'agression sexuelle comme « toute atteinte sexuelle commise avec violence, contrainte, menace ou surprise », c'est-à-dire en l'absence de consentement.",
+      "frenchLawArticle": "Depuis la loi du 21 avril 2021, tout acte sexuel sur un mineur de moins de 15 ans par un majeur est qualifié de viol ou d'agression sexuelle, sans avoir à prouver l'absence de consentement.",
+      "importantTitle": "Cette application n'est pas une preuve juridique",
+      "importantBody": "Un consentement enregistré dans Je Le Veux ne constitue pas une preuve opposable devant un tribunal. Le consentement peut être retiré à tout moment, y compris pendant l'interaction. En cas de doute ou de situation d'urgence, contactez immédiatement les autorités ou une ligne d'écoute."
+    },
+
+    "helpline": {
+      "title": "Lignes d'écoute et soutien",
+      "intro": "Si vous ou un proche êtes en situation de détresse, n'hésitez pas à appeler. Ces services sont gratuits, anonymes et confidentiels.",
+      "frTitle": "France",
+      "fr3919": "3919 — Violences Femmes Info",
+      "frPolice": "17 — Police-Secours",
+      "frSos": "116 006 — Aide aux victimes",
+      "enTitle": "International (anglophone)",
+      "usRainn": "RAINN (États-Unis)",
+      "ukRefuge": "Refuge (Royaume-Uni)",
+      "internationalNote": "En dehors de ces pays, contactez les services d'urgence locaux ou une association d'aide aux victimes proche de chez vous."
+    },
+
+    "privacy": {
+      "title": "Sécurité et confidentialité",
+      "intro": "Je Le Veux est conçue pour protéger votre vie privée par défaut. Voici comment.",
+      "e2eTitle": "Chiffrement de bout en bout",
+      "e2eBody": "L'énoncé de chaque consentement est chiffré avec une clé de session générée localement, jamais transmise au serveur. Seules les personnes ayant le code de partage peuvent déchiffrer le contenu. Notre équipe et nos hébergeurs ne peuvent pas lire vos énoncés.",
+      "storageTitle": "Stockage minimal",
+      "storageBody": "Nous ne stockons que ce qui est strictement nécessaire au fonctionnement de l'application : votre pseudonyme, votre adresse e-mail (pour l'authentification), votre clé publique, et les métadonnées des consentements (niveau, durée, statut). Aucun contenu en clair, aucun tracking, aucune publicité.",
+      "rightsTitle": "Vos droits",
+      "rightsBody": "Vous pouvez à tout moment exporter toutes vos données au format JSON depuis l'écran Profil, ou supprimer définitivement votre compte. Ces droits sont conformes au RGPD (articles 15, 16, 17, 20)."
+    },
+
+    "terms": {
+      "title": "Conditions Générales d'Utilisation",
+      "preamble": "Les présentes Conditions Générales d'Utilisation (« CGU ») encadrent l'utilisation de l'application mobile Je Le Veux (« l'Application »). En créant un compte, vous reconnaissez avoir lu et accepté ces CGU dans leur intégralité.",
+      "objectTitle": "1. Objet",
+      "objectBody": "L'Application Je Le Veux est un outil de communication permettant à deux personnes majeures de formaliser un accord mutuel, libre et explicite avant une interaction. Elle ne se substitue à aucun cadre juridique, ni à la communication verbale, ni au consentement effectif qui doit être maintenu pendant toute la durée de l'interaction.",
+      "eligibilityTitle": "2. Éligibilité",
+      "eligibilityBody": "L'utilisation de l'Application est réservée :",
+      "eligibilityBullet1": "Aux personnes physiques majeures (18 ans révolus).",
+      "eligibilityBullet2": "À un usage strictement personnel et non commercial.",
+      "accountTitle": "3. Compte utilisateur",
+      "accountBody": "Vous êtes seul responsable de la confidentialité de vos identifiants. Vous vous engagez à fournir des informations exactes lors de l'inscription et à maintenir ces informations à jour. Vous pouvez à tout moment supprimer votre compte depuis l'écran Profil.",
+      "serviceTitle": "4. Fonctionnement du service",
+      "serviceBody": "L'Application permet de créer un consentement, de l'envoyer à une autre personne via un code sécurisé, et de recevoir l'acceptation ou le refus de cette personne. Tous les contenus échangés sont chiffrés de bout en bout : nous ne pouvons pas accéder à leur contenu en clair.",
+      "conductTitle": "5. Engagements de l'utilisateur",
+      "conductBody": "En utilisant l'Application, vous vous engagez à :",
+      "conductBullet1": "Respecter les autres utilisateurs et ne pas utiliser l'Application à des fins de harcèlement, de menace ou de contrainte.",
+      "conductBullet2": "Ne pas créer de consentement frauduleux ou de mauvaise foi.",
+      "conductBullet3": "Respecter le caractère révocable et renouvelable du consentement : un consentement formalisé dans l'Application ne dispense pas de la communication continue avec l'autre partie.",
+      "liabilityTitle": "6. Responsabilité",
+      "liabilityBody": "L'éditeur ne saurait être tenu responsable des usages faits de l'Application par les utilisateurs, ni de l'absence de respect d'un consentement par l'une des parties. L'Application est un outil de communication ; elle ne garantit ni le respect effectif du consentement, ni sa valeur probatoire devant une juridiction.",
+      "ipTitle": "7. Propriété intellectuelle",
+      "ipBody": "L'ensemble des éléments de l'Application (interface, design, code source, marque) est protégé par le droit de la propriété intellectuelle. Toute reproduction, distribution, ou exploitation commerciale sans autorisation expresse est interdite.",
+      "terminationTitle": "8. Résiliation",
+      "terminationBody": "Vous pouvez supprimer votre compte à tout moment, ce qui entraîne la suppression définitive de toutes vos données. Nous nous réservons le droit de suspendre ou supprimer un compte en cas de manquement grave aux présentes CGU.",
+      "changesTitle": "9. Évolution des CGU",
+      "changesBody": "Nous pouvons modifier les présentes CGU. Toute modification substantielle vous sera notifiée dans l'Application avec une demande de ré-acceptation.",
+      "jurisdictionTitle": "10. Droit applicable et juridiction",
+      "jurisdictionBody": "Les présentes CGU sont régies par le droit français. Tout litige sera soumis à la juridiction des tribunaux français compétents.",
+      "contactTitle": "11. Contact",
+      "contactEmail": "Nous écrire"
+    },
+
+    "privacyPolicy": {
+      "title": "Politique de confidentialité",
+      "preamble": "La présente Politique de confidentialité décrit comment Je Le Veux collecte, utilise, et protège vos données personnelles, conformément au Règlement Général sur la Protection des Données (RGPD).",
+      "controllerTitle": "1. Responsable de traitement",
+      "controllerBody": "Le responsable de traitement est l'éditeur de l'Application Je Le Veux. Vous pouvez le contacter à l'adresse indiquée en fin de document.",
+      "dataTitle": "2. Données collectées",
+      "dataBody": "Nous collectons uniquement les données strictement nécessaires :",
+      "dataBullet1": "Votre adresse e-mail (pour l'authentification).",
+      "dataBullet2": "Votre pseudonyme (visible des autres utilisateurs avec qui vous interagissez).",
+      "dataBullet3": "Votre clé publique de chiffrement (pour permettre le déchiffrement local).",
+      "dataBullet4": "Les métadonnées de vos consentements (niveau, durée, statut, horodatages) — jamais leur contenu en clair.",
+      "purposeTitle": "3. Finalités du traitement",
+      "purposeBody": "Vos données sont utilisées pour : authentifier votre accès au service, permettre l'échange de consentements entre utilisateurs, assurer la sécurité et la conformité juridique du service. Nous n'utilisons jamais vos données à des fins publicitaires ou de profilage.",
+      "basisTitle": "4. Base légale",
+      "basisBody": "Le traitement de vos données repose sur l'exécution du contrat (l'utilisation de l'Application après acceptation des CGU) et sur votre consentement explicite donné lors de l'inscription.",
+      "retentionTitle": "5. Durée de conservation",
+      "retentionBody": "Vos données sont conservées tant que votre compte est actif. Vous pouvez le supprimer à tout moment depuis l'écran Profil — cette suppression est immédiate et irréversible.",
+      "sharingTitle": "6. Partage avec des tiers",
+      "sharingBody": "Nous ne partageons aucune donnée avec des tiers à des fins commerciales. Seul notre hébergeur (Supabase, situé en Europe) traite techniquement vos données pour assurer le fonctionnement du service.",
+      "rightsTitle": "7. Vos droits",
+      "rightsBody": "Conformément au RGPD, vous disposez des droits suivants :",
+      "rightsAccess": "Droit d'accès : exporter toutes vos données au format JSON.",
+      "rightsRectify": "Droit de rectification : modifier votre pseudonyme à tout moment.",
+      "rightsErasure": "Droit à l'effacement : supprimer définitivement votre compte.",
+      "rightsPortability": "Droit à la portabilité : récupérer vos données dans un format lisible.",
+      "rightsOppose": "Droit d'opposition : nous contacter pour toute opposition au traitement.",
+      "securityTitle": "8. Sécurité",
+      "securityBody": "Toutes les communications avec nos serveurs sont chiffrées (TLS). Les énoncés de consentement sont chiffrés de bout en bout avant transmission : nous n'avons techniquement pas accès à leur contenu.",
+      "contactTitle": "9. Contact",
+      "contactEmail": "Nous contacter"
+    },
+
+    "legalMentions": {
+      "title": "Mentions légales",
+      "editorTitle": "Éditeur",
+      "editorBody": "Je Le Veux est édité à titre personnel. Pour toute question relative à l'édition, utilisez l'adresse de contact ci-dessous.",
+      "directorTitle": "Directeur de publication",
+      "directorBody": "Le directeur de publication est l'éditeur de l'Application.",
+      "hostTitle": "Hébergeur",
+      "hostBody": "L'Application est hébergée par Supabase (Singapore Pte. Ltd.), avec une infrastructure située en Europe.",
+      "contactTitle": "Contact",
+      "contactEmail": "Nous écrire"
+    }
   },
   "navigation": {
     "home": "Accueil",

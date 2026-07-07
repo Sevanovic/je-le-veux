@@ -8,6 +8,7 @@ export interface SignUpInput {
   password: string;
   pseudonym: string;
   preferredLanguage: SupportedLanguage;
+  termsAccepted: boolean;
 }
 
 export interface SignUpOutput {
@@ -18,14 +19,12 @@ export interface SignUpOutput {
  * Use case: Sign up a new user.
  *
  * Orchestrates:
- * 1. Validate pseudonym format (domain rule)
+ * 1. Validate inputs (pseudonym, email, password, terms)
  * 2. Create auth account via IAuthService
  * 3. Generate E2E key pair via ICryptoService
  * 4. Store secret key locally via ISecureStorageService
- * 5. Send public key to user profile
+ * 5. Send public key + terms acceptance timestamp to user profile
  * 6. Return complete user profile
- *
- * The presentation layer calls this instead of touching infrastructure directly.
  */
 export async function signUpUseCase(input: SignUpInput): Promise<SignUpOutput> {
   const { auth, crypto, secureStorage } = getContainer();
@@ -34,13 +33,14 @@ export async function signUpUseCase(input: SignUpInput): Promise<SignUpOutput> {
   if (!isValidPseudonym(input.pseudonym)) {
     throw new Error('INVALID_PSEUDONYM');
   }
-
   if (!input.email.includes('@')) {
     throw new Error('INVALID_EMAIL');
   }
-
   if (input.password.length < 8) {
     throw new Error('PASSWORD_TOO_SHORT');
+  }
+  if (!input.termsAccepted) {
+    throw new Error('TERMS_NOT_ACCEPTED');
   }
 
   // 2. Create account
@@ -62,9 +62,10 @@ export async function signUpUseCase(input: SignUpInput): Promise<SignUpOutput> {
     // SecureStore may fail on web — non-blocking
   }
 
-  // 5. Send public key to profile
+  // 5. Send public key + terms acceptance to profile
   await auth.updateProfile(userId, {
     publicKey: keyPair.publicKey,
+    termsAcceptedAt: new Date(),
   } as Partial<User>);
 
   // 6. Fetch and return complete profile
